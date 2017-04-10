@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/user_logo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:clickable="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/user_logo"
+        app:riv_border_width="3dp"
+        app:riv_corner_radius="250dp"
+
+        />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_logo"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:text="@string/user_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <TextView
+        android:id="@+id/user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_name"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:text="@string/user_email"
+        />
+
+
+    <TextView
+        android:id="@+id/user_birthday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_email"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:text="@string/user_birthday"/>
+
+    <ImageButton
+        android:id="@+id/user_logout"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:padding="0dp"
+        android:background="@color/colorBtnBackground"
+        android:src="@drawable/ic_logout"/>
+
+</RelativeLayout>

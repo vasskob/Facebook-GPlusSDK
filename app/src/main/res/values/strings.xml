@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FacebookGplusSDK</string>
+    <string name="facebook_app_id">281147752325836</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+    <string name="user_birthday">User Birthday</string>
+</resources>
