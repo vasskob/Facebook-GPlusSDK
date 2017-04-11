@@ -4,4 +4,6 @@
     <string name="user_name">User Name</string>
     <string name="user_email">User Email</string>
     <string name="user_birthday">User Birthday</string>
+    <string name="permission_granted">Permision is granted</string>
+    <string name="permission_denied">Permission denied</string>
 </resources>

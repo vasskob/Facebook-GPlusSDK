@@ -46,28 +46,31 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
     private static final int RC_SIGN_IN = 1;
 
     public static final String USER_BIRTHDAY = "user_birthday";
-    public static final String EMAIL = "email";
+
     public static final String PUBLIC_PROFILE = "public_profile";
+    public static final String FIELDS = "fields";
+    public static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
+    public static final String EMAIL = "email";
+    public static final String BIRTHDAY = "birthday";
+    public static final String PERSON_INFORMATION_IS_NULL = "Person information is null";
 
     private GoogleApiClient mGoogleApiClient;
-    private String personName;
-    private String personPhotoUrl;
-    private String birth;
-    private String email;
+    private String uName;
+    private String uPhotoUrl;
+    private String uBirthday;
+    private String uEmail;
     private CallbackManager mCallbackManager;
 
 
     @OnClick(R.id.facebook_sign_in)
     public void onFBookSignInClick() {
         singInFacebook();
-
     }
 
     @OnClick(R.id.g_plus_sign_in)
     public void onGPlusSignInClick() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
-
     }
 
 
@@ -94,8 +97,6 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
 
     // G +
     public void initGPlusSignIn() {
-
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestProfile()
@@ -106,18 +107,17 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(Plus.API)
                 .build();
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         } else {
-            // For facebook log in callback
+            // Facebook log in callback
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -126,7 +126,6 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
 
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
             getUserProfileInformation();
             openUserProfile();
 
@@ -139,10 +138,10 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
     private void openUserProfile() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(
-                personName, email, birth, personPhotoUrl, mGoogleApiClient);
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+                uName, uEmail, uBirthday, uPhotoUrl, mGoogleApiClient);
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.fragment_container, userProfileFragment);
-        ft.addToBackStack("Me");
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -152,17 +151,17 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi
                     .getCurrentPerson(mGoogleApiClient);
-            personName = currentPerson.getDisplayName();
-            personPhotoUrl = currentPerson.getImage().getUrl();
-            birth = currentPerson.getBirthday();
-            email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            uName = currentPerson.getDisplayName();
+            uPhotoUrl = currentPerson.getImage().getUrl();
+            uBirthday = currentPerson.getBirthday();
+            uEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
-            Log.d(TAG, "getUserProfileInformation: personN= " + personName + " email=" + email +
-                    " birth=" + currentPerson.getBirthday() + " personPhotoUrl =" + personPhotoUrl);
+            Log.d(TAG, "getUserProfileInformation: personN= " + uName + " uEmail=" + uEmail +
+                    " uBirthday=" + currentPerson.getBirthday() + " uPhotoUrl =" + uPhotoUrl);
 
         } else {
             Toast.makeText(getActivity(),
-                    "Person information is null", Toast.LENGTH_LONG).show();
+                    PERSON_INFORMATION_IS_NULL, Toast.LENGTH_LONG).show();
 
         }
 
@@ -175,16 +174,14 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
     }
 
     // Facebook
-
-
     private void initFacebookSignIn() {
         mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(mCallbackManager, this);
     }
 
     private void singInFacebook() {
-        List<String> permissionNeeds = Arrays.asList(PUBLIC_PROFILE, EMAIL, USER_BIRTHDAY);
-        LoginManager.getInstance().logInWithReadPermissions(this, permissionNeeds);
+        List<String> permissions = Arrays.asList(PUBLIC_PROFILE, EMAIL, USER_BIRTHDAY);
+        LoginManager.getInstance().logInWithReadPermissions(this, permissions);
     }
 
     @Override
@@ -201,11 +198,12 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
                         final Profile profile = Profile.getCurrentProfile();
                         parseFBResponse(object, profile);
                         openUserProfile();
+                        Log.d(TAG, "onCompleted:");
                     }
                 });
 
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "name,email,birthday");
+        parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
         request.setParameters(parameters);
         request.executeAsync();
     }
@@ -216,7 +214,7 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
 
     @Override
     public void onError(FacebookException e) {
-        Log.d(TAG, "onError:" + e);
+        Log.e(TAG, "onError:" + e);
     }
 
     private void parseFBResponse(JSONObject jsonObject, Profile profile) {
@@ -224,13 +222,13 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
         try {
             if (jsonObject != null) {
 
-                email = jsonObject.getString("email");
-                birth = jsonObject.getString("birthday");
-                personName = profile.getName();
-                personPhotoUrl = profile.getProfilePictureUri(200, 200).toString();
+                uEmail = jsonObject.getString(EMAIL);
+                uBirthday = jsonObject.getString(BIRTHDAY);
+                uName = profile.getName();
+                uPhotoUrl = profile.getProfilePictureUri(200, 200).toString();
 
-                Log.d(TAG, "parseFBResponse: personN= " + personName + " email=" + email +
-                        " birth=" + birth + " personPhotoUrl =" + personPhotoUrl);
+                Log.d(TAG, "parseFBResponse: personN= " + uName + " uEmail=" + uEmail +
+                        " uBirthday=" + uBirthday + " uPhotoUrl =" + uPhotoUrl);
             }
         } catch (JSONException joe) {
             Log.e(TAG, "parseFBResponse: " + joe);

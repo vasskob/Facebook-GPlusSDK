@@ -1,8 +1,10 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,19 +31,25 @@ public class UserProfileFragment extends Fragment {
     private static String userLogo;
     private static GoogleApiClient mGoogleApiClient;
 
+    private static final String TAG = UserProfileFragment.class.getSimpleName();
+
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
-        signOut();
-        //LoginManager.getInstance().logOut();
+        signOutGPlus();
+        signOutFacebook();
         getFragmentManager().popBackStack();
     }
 
-    private void signOut() {
+    private void signOutFacebook() {
+        LoginManager.getInstance().logOut();
+    }
+
+    private void signOutGPlus() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
-                    public void onResult(Status status) {
-                        // ...
+                    public void onResult(@NonNull Status status) {
+                        Log.d(TAG, "signOutGPlus  onResult:" + status);
                     }
                 });
     }
