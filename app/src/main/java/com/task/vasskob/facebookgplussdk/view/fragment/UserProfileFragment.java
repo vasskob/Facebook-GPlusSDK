@@ -3,14 +3,16 @@ package com.task.vasskob.facebookgplussdk.view.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.login.LoginResult;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.task.vasskob.facebookgplussdk.R;
@@ -25,14 +27,23 @@ public class UserProfileFragment extends Fragment {
     private static String userEmail;
     private static String userBirthday;
     private static String userLogo;
+    private static GoogleApiClient mGoogleApiClient;
 
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        LoginFragment loginFragment = new LoginFragment();
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        ft.replace(R.id.fragment_container, loginFragment);
-        ft.commit();
+        signOut();
+        //LoginManager.getInstance().logOut();
+        getFragmentManager().popBackStack();
+    }
+
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        // ...
+                    }
+                });
     }
 
     @Bind(R.id.user_logo)
@@ -66,12 +77,13 @@ public class UserProfileFragment extends Fragment {
         return rootView;
     }
 
-    public static UserProfileFragment newInstance(String uName, String uEmail, String uBirthday, String uLogo ) {
+    public static UserProfileFragment newInstance(String uName, String uEmail, String uBirthday, String uLogo, GoogleApiClient googleApiClient) {
         UserProfileFragment f = new UserProfileFragment();
         userName = uName;
         userEmail = uEmail;
         userBirthday = uBirthday;
         userLogo = uLogo;
+        mGoogleApiClient = googleApiClient;
         return f;
     }
 }

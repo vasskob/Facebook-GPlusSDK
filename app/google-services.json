@@ -13,16 +13,16 @@
       },
       "oauth_client": [
         {
-          "client_id": "879739577299-5l164dveqsm7q207rq695oe07edr4be0.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "879739577299-rbddr3d7og2kti6285b8g66l40g9lb5g.apps.googleusercontent.com",
+          "client_id": "879739577299-gpp8kbka7cah2phf37uf81igkbirkfd6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.task.vasskob.facebookgplussdk",
-            "certificate_hash": "8f48e5d7e43955e0333b35622073dafa00792528"
+            "certificate_hash": "f3ff497542777ce168270154efd8321a5d66cbfb"
           }
+        },
+        {
+          "client_id": "879739577299-5l164dveqsm7q207rq695oe07edr4be0.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
