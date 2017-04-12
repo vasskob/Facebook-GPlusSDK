@@ -33,6 +33,18 @@ public class UserProfileFragment extends Fragment {
 
     private static final String TAG = UserProfileFragment.class.getSimpleName();
 
+    @Bind(R.id.user_logo)
+    RoundedImageView roundedImageView;
+
+    @Bind(R.id.user_name)
+    TextView tvUserName;
+
+    @Bind(R.id.user_email)
+    TextView tvUserEmail;
+
+    @Bind(R.id.user_birthday)
+    TextView tvUserBirthday;
+
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
         signOutGPlus();
@@ -53,18 +65,6 @@ public class UserProfileFragment extends Fragment {
                     }
                 });
     }
-
-    @Bind(R.id.user_logo)
-    RoundedImageView roundedImageView;
-
-    @Bind(R.id.user_name)
-    TextView tvUserName;
-
-    @Bind(R.id.user_email)
-    TextView tvUserEmail;
-
-    @Bind(R.id.user_birthday)
-    TextView tvUserBirthday;
 
     @Nullable
     @Override
