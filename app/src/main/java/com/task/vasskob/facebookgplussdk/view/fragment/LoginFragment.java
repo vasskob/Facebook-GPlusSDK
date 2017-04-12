@@ -28,7 +28,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.task.vasskob.facebookgplussdk.R;
-import com.task.vasskob.facebookgplussdk.view.LoginView;
+import com.task.vasskob.facebookgplussdk.model.User;
+import com.task.vasskob.facebookgplussdk.view.FbAuthenticatorImpl;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +40,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginFragment extends Fragment implements LoginView, GoogleApiClient.OnConnectionFailedListener, FacebookCallback<LoginResult> {
+public class LoginFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener, FacebookCallback<LoginResult> {
 
     private static final String TAG = LoginFragment.class.getSimpleName();
     private static final String GOOGLE_PLAY_SERVICES_ERROR = "Google Play Services error.";
@@ -60,11 +61,27 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
     private String uBirthday;
     private String uEmail;
     private CallbackManager mCallbackManager;
+    private FbAuthenticatorImpl fbAuthenticator;
 
 
     @OnClick(R.id.facebook_sign_in)
     public void onFBookSignInClick() {
-        singInFacebook();
+        fbAuthenticator.doLogin();
+        User user = fbAuthenticator.getUser();
+        openFBUserProfile(user);
+        Log.d(TAG, "onFBookSignInClick user name = " + user.getName() + " email= " + user.getEmail());
+
+        // singInFacebook();
+    }
+
+    private void openFBUserProfile(User user) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(
+                user.getName(), user.getEmail(), user.getBirthday(), user.getUserPhotoUri(), mGoogleApiClient);
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+        ft.replace(R.id.fragment_container, userProfileFragment);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     @OnClick(R.id.g_plus_sign_in)
@@ -78,7 +95,10 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initGPlusSignIn();
-        initFacebookSignIn();
+        //  initFacebookSignIn();
+
+        fbAuthenticator = new FbAuthenticatorImpl(this);
+
     }
 
     @Nullable
@@ -87,11 +107,6 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
         View rootView = inflater.inflate(R.layout.login_layout, container, false);
         ButterKnife.bind(this, rootView);
         return rootView;
-    }
-
-    @Override
-    public void loginPassed(int id) {
-
     }
 
 
@@ -234,6 +249,8 @@ public class LoginFragment extends Fragment implements LoginView, GoogleApiClien
             Log.e(TAG, "parseFBResponse: " + joe);
         }
     }
+
+
 }
 
 

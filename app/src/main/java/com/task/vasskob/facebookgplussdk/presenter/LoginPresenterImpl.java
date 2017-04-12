@@ -15,6 +15,7 @@ import com.task.vasskob.facebookgplussdk.view.LoginView;
 public class LoginPresenterImpl implements LoginPresenter, FacebookCallback<LoginResult> {
 
     private static final String TAG = LoginPresenterImpl.class.getSimpleName();
+
     private LoginView mLoginView;
     private Context mContext;
     private CallbackManager mCallbackManager;
