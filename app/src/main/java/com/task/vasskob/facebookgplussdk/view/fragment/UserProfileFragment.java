@@ -47,7 +47,9 @@ public class UserProfileFragment extends Fragment {
 
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
-        signOutGPlus();
+        if (mGoogleApiClient != null) {
+            signOutGPlus();
+        }
         signOutFacebook();
         getFragmentManager().popBackStack();
     }

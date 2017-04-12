@@ -1,6 +1,5 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,26 +23,6 @@ import butterknife.OnClick;
 
 public class LoginFragment extends Fragment implements LoginView {
 
-    //    private static final String TAG = LoginFragment.class.getSimpleName();
-//    private static final String GOOGLE_PLAY_SERVICES_ERROR = "Google Play Services error.";
-//    private static final int RC_SIGN_IN = 1;
-//
-//    public static final String USER_BIRTHDAY = "user_birthday";
-//
-//    public static final String PUBLIC_PROFILE = "public_profile";
-//    public static final String FIELDS = "fields";
-//    public static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
-//    public static final String EMAIL = "email";
-//    public static final String BIRTHDAY = "birthday";
- //   public static final String PERSON_INFORMATION_IS_NULL = "Person information is null";
-
-    //  private GoogleApiClient mGoogleApiClient;
-//    private String uName;
-//    private String uPhotoUrl;
-//    private String uBirthday;
-//    private String uEmail;
-//    private CallbackManager mCallbackManager;
-    private Context mContext;
     private GoogleSignInPresenter googlePresenter;
     private FBPresenterImpl facebookPresenter;
 
@@ -52,28 +31,20 @@ public class LoginFragment extends Fragment implements LoginView {
         googlePresenter.signIn(this);
     }
 
-//    @Bind(R.id.g_plus_sign_in)
-//    Button gPlusSignInBtn;
-
     @OnClick(R.id.facebook_sign_in)
     public void onFBookSignInClick() {
-
-        //     signInFBPresenter.logIn();
-
-
+        facebookPresenter.logIn(this);
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getActivity();
 
         googlePresenter = new GooglePresenterImpl();
         googlePresenter.initGoogleClient(this);
 
-        facebookPresenter= new FBPresenterImpl();
-        facebookPresenter.initSignInFB();
+        facebookPresenter = new FBPresenterImpl();
+        facebookPresenter.initSignInFB(this);
 
     }
 
@@ -96,17 +67,12 @@ public class LoginFragment extends Fragment implements LoginView {
         ft.replace(R.id.fragment_container, userProfileFragment);
         ft.addToBackStack(null);
         ft.commit();
-
     }
 
-    @Override
-    public Context getContext() {
-        return mContext;
-    }
 
     @Override
     public void showToast(String message) {
-        Toast.makeText(mContext, message,
+        Toast.makeText(getActivity(), message,
                 Toast.LENGTH_SHORT).show();
     }
 
