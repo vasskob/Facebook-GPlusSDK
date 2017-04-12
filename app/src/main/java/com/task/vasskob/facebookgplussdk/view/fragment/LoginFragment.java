@@ -65,6 +65,7 @@ public class LoginFragment extends Fragment implements LoginView {
                 user.getName(), user.getEmail(), user.getBirthday(), user.getUserPhotoUri(), mGoogleApiClient);
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.fragment_container, userProfileFragment);
+        // TODO: 12/04/17 really fragment to backstack?
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -80,9 +81,22 @@ public class LoginFragment extends Fragment implements LoginView {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         googlePresenter.onActivityResult(this, requestCode, resultCode, data);
         facebookPresenter.onActivityResult(requestCode, resultCode, data);
-
     }
 
+    /*
+        abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
+        GoogleLoginHelper(Context) & FacebookLoginHelper(Context) implement this class
+        LoginPresenter(LoginHelper google, LoginHelper facebook)
+
+        set UserProfileFragment with social (Facebook, Google)
+
+        in UserProfileFragment get user info from selected social use
+        abstract UserProfileHelper with getUser(), logout()
+
+        GoogleUserProfileHelper & FacebookUserProfileHelper extend UserProfileHelper
+        and go on/
+
+     */
 }
 
 

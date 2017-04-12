@@ -87,6 +87,7 @@ public class UserProfileFragment extends Fragment {
         return rootView;
     }
 
+    // TODO: 12/04/17 newInstance is on the same abstraction level as constructor, should be on the top of the page
     public static UserProfileFragment newInstance(String uName, String uEmail, String uBirthday, String uLogo, GoogleApiClient googleApiClient) {
         UserProfileFragment f = new UserProfileFragment();
         userName = uName;
