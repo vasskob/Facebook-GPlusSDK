@@ -1,10 +1,16 @@
-package com.task.vasskob.facebookgplussdk;
+package com.task.vasskob.facebookgplussdk.helper.login;
+
+import android.content.Intent;
+
+import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
 public abstract class LoginHelper {
 
     /*
-        abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
+            abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
+
         GoogleLoginHelper(Context) & FacebookLoginHelper(Context) implement this class
+
         LoginPresenter(LoginHelper google, LoginHelper facebook)
 
         set UserProfileFragment with social (Facebook, Google)
@@ -19,6 +25,7 @@ public abstract class LoginHelper {
 
     abstract void init();
     abstract void doLogin();
-    abstract void onActivityResult();
+    abstract void onActivityResult(int requestCode, int resultCode, Intent data);
+
 
 }

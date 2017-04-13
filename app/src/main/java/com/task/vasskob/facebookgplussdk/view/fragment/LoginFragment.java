@@ -57,7 +57,7 @@ public class LoginFragment extends Fragment implements LoginView {
 
 
     @Override
-    public void switchToProfileFragment(User user) {
+    public void onLoginSuccess(User user) {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(
@@ -87,7 +87,6 @@ public class LoginFragment extends Fragment implements LoginView {
         LoginPresenter(LoginHelper google, LoginHelper facebook)
 
         set UserProfileFragment with social (Facebook, Google)
-
         in UserProfileFragment get user info from selected social use
         abstract UserProfileHelper with getUser(), logout()
 

@@ -1,5 +1,6 @@
-package com.task.vasskob.facebookgplussdk.presenter.facebook;
+package com.task.vasskob.facebookgplussdk.helper.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,18 +15,15 @@ import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.task.vasskob.facebookgplussdk.model.User;
-import com.task.vasskob.facebookgplussdk.presenter.google.GooglePresenterImpl;
-import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.List;
+public class FacebookLoginHelper extends LoginHelper {
 
-public class FBPresenterImpl implements FBSignInPresenter {
-
-    private static final String TAG = GooglePresenterImpl.class.getSimpleName();
+    private static final String TAG = FacebookLoginHelper.class.getSimpleName();
+    private CallbackManager callbackManager;
+    private final Context context;
     private static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
     private static final String PUBLIC_PROFILE = "public_profile";
     private static final String USER_BIRTHDAY = "user_birthday";
@@ -38,49 +36,15 @@ public class FBPresenterImpl implements FBSignInPresenter {
     private String uBirthday;
     private String uEmail;
 
-    private CallbackManager callbackManager;
+    public FacebookLoginHelper(Context context) {
+        this.context = context;
+    }
 
     @Override
-    public void initSignInFB(final LoginFragment loginFragment) {
+    void init() {
+
         callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "onSuccess:" + loginResult.getAccessToken());
 
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(
-                                    JSONObject object,
-                                    GraphResponse response) {
-                                final Profile profile = Profile.getCurrentProfile();
-                                parseFBResponse(object, profile);
-
-                                User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-                                loginFragment.onLoginSuccess(user);
-
-                                Log.d(TAG, "onCompleted:");
-                            }
-                        });
-
-                Bundle parameters = new Bundle();
-                parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
-                request.setParameters(parameters);
-                request.executeAsync();
-            }
-
-            @Override
-            public void onCancel() {
-                loginFragment.showToast(FB_LOGIN_CANCELED);
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.e(TAG, "Callback onError: " + error);
-            }
-        });
     }
 
     private void parseFBResponse(JSONObject jsonObject, Profile profile) {
@@ -102,17 +66,56 @@ public class FBPresenterImpl implements FBSignInPresenter {
     }
 
     @Override
-    public void logIn(final LoginFragment loginFragment) {
-        List<String> permissions = Arrays.asList(PUBLIC_PROFILE, EMAIL, USER_BIRTHDAY);
-        LoginManager.getInstance().logInWithReadPermissions(loginFragment,
-                permissions);
+    void doLogin() {
+
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "onSuccess:" + loginResult.getAccessToken());
+
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                final Profile profile = Profile.getCurrentProfile();
+                                parseFBResponse(object, profile);
+
+                                User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
+
+                               // loginFragment.onLoginSuccess(user);
+
+                                Log.d(TAG, "onCompleted:");
+                            }
+                        });
+
+                Bundle parameters = new Bundle();
+                parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+                //loginFragment.showToast(FB_LOGIN_CANCELED);
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e(TAG, "Callback onError: " + error);
+            }
+        });
+
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (FacebookSdk.isFacebookRequestCode(requestCode)) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+
 }
