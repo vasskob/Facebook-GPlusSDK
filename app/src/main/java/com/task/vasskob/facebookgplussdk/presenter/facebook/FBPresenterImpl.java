@@ -59,7 +59,7 @@ public class FBPresenterImpl implements FBSignInPresenter {
                                 parseFBResponse(object, profile);
 
                                 User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-                                loginFragment.switchToProfileFragment(user, null);
+                                loginFragment.switchToProfileFragment(user);
 
                                 Log.d(TAG, "onCompleted:");
                             }

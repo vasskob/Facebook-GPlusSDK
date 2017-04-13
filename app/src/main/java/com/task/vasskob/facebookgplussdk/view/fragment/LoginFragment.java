@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.task.vasskob.facebookgplussdk.R;
 import com.task.vasskob.facebookgplussdk.model.User;
 import com.task.vasskob.facebookgplussdk.presenter.facebook.FBPresenterImpl;
@@ -58,15 +57,13 @@ public class LoginFragment extends Fragment implements LoginView {
 
 
     @Override
-    public void switchToProfileFragment(User user, GoogleApiClient mGoogleApiClient) {
+    public void switchToProfileFragment(User user) {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(
-                user.getName(), user.getEmail(), user.getBirthday(), user.getUserPhotoUri(), mGoogleApiClient);
+                user.getName(), user.getEmail(), user.getBirthday(), user.getUserPhotoUri());
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.fragment_container, userProfileFragment);
-        // TODO: 12/04/17 really fragment to backstack?
-        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -83,6 +80,7 @@ public class LoginFragment extends Fragment implements LoginView {
         facebookPresenter.onActivityResult(requestCode, resultCode, data);
     }
 
+    // TODO: 12/04/17
     /*
         abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
         GoogleLoginHelper(Context) & FacebookLoginHelper(Context) implement this class
@@ -97,6 +95,7 @@ public class LoginFragment extends Fragment implements LoginView {
         and go on/
 
      */
+
 }
 
 

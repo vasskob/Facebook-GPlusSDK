@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
 
@@ -18,8 +17,7 @@ android {
         config {
             keyAlias 'facebook'
             keyPassword '17801780'
-            // todo avoid absolute path
-            storeFile file('/home/vasskob/Workspace/MyTasks/FacebookGplusSDK/facebook.jks')
+            storeFile file('facebook.jks')
             storePassword '17801780'
         }
     }
@@ -51,8 +49,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
 
-    // todo old version used, no need to use all play-services https://developers.google.com/android/guides/setup
-    compile 'com.google.android.gms:play-services:9.0.0'
+    compile 'com.google.android.gms:play-services-auth:10.2.1'
+    compile 'com.google.android.gms:play-services-plus:10.2.1'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -60,4 +58,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
 
 }
+
+apply plugin: 'com.google.gms.google-services'
 

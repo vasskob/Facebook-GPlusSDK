@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
 import butterknife.Bind;
@@ -23,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOGIN_FRAGMENT = "loginFragment";
     private static final int PERMISSION_REQUEST_CODE = 200;
-    private LoginFragment loginFragment;
+    public LoginFragment loginFragment;
     private Bundle savedState;
-
+    public static GoogleApiClient mGoogleApiClient;
     @Bind(R.id.fragment_container)
     FrameLayout frameLayout;
 
@@ -43,6 +44,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             initFragment(savedInstanceState);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect(GoogleApiClient.SIGN_IN_MODE_OPTIONAL);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     private void initFragment(Bundle savedInstanceState) {
