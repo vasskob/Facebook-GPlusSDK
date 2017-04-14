@@ -3,9 +3,6 @@ package com.task.vasskob.facebookgplussdk.helper.profile;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
@@ -21,12 +18,9 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
     private OnFacebookDataLoadListener listener;
     private static final String TAG = FacebookUserProfileHelper.class.getSimpleName();
     private static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
-    private static final String PUBLIC_PROFILE = "public_profile";
-    private static final String USER_BIRTHDAY = "user_birthday";
     private static final String BIRTHDAY = "birthday";
     private static final String EMAIL = "email";
     private static final String FIELDS = "fields";
-    private static final String FB_LOGIN_CANCELED = "LogIn canceled";
     private final LoginResult loginResult;
     private String uName;
     private String uEmail;
@@ -35,8 +29,9 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
     private User user;
 
 
-    public FacebookUserProfileHelper(LoginResult loginResult) {
+    public FacebookUserProfileHelper(LoginResult loginResult, OnFacebookDataLoadListener listener) {
         this.loginResult = loginResult;
+        this.listener = listener;
     }
 
     @Override
@@ -50,8 +45,8 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
                             GraphResponse response) {
                         final Profile profile = Profile.getCurrentProfile();
                         parseFBResponse(object, profile);
-                     //   user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-                      //  listener.onCompleted(user);
+                        user = new User(uName, uEmail, uBirthday, uPhotoUrl);
+                        listener.onCompleted(user);
                     }
                 });
 
@@ -59,7 +54,6 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
         parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
         request.setParameters(parameters);
         request.executeAsync();
-
         return user;
     }
 
@@ -73,8 +67,6 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
                 uEmail = jsonObject.getString(EMAIL);
                 uBirthday = jsonObject.getString(BIRTHDAY);
                 uPhotoUrl = profile.getProfilePictureUri(200, 200).toString();
-                user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-
                 Log.d(TAG, "parseFBResponse: personN= " + uName + " uEmail=" + uEmail +
                         " uBirthday=" + uBirthday + " uPhotoUrl =" + uPhotoUrl);
             }

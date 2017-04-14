@@ -22,7 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class UserProfileFragment extends Fragment implements FacebookUserProfileHelper.OnFacebookDataLoadListener {
+public class UserProfileFragment extends Fragment {
 
     private static final int GOOGLE = 0;
     private static final int FACEBOOK = 1;
@@ -82,18 +82,18 @@ public class UserProfileFragment extends Fragment implements FacebookUserProfile
             googleUserProfileHelper = new GoogleUserProfileHelper();
             user = googleUserProfileHelper.getUser();
         } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper = new FacebookUserProfileHelper(loginResult);
-            user = facebookUserProfileHelper.getUser();
+            facebookUserProfileHelper = new FacebookUserProfileHelper(loginResult,
+                    new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
+                @Override
+                public void onCompleted(User user) {
+                showUserData(user);
+                }
+            });
+
+             user = facebookUserProfileHelper.getUser();
         }
         if (user != null) {
-            tvUserName.setText(user.getName());
-            tvUserEmail.setText(user.getEmail());
-            tvUserBirthday.setText(user.getBirthday());
-
-            Picasso.with(getContext())
-                    .load(user.getUserPhotoUri())
-                    .placeholder(R.drawable.user_logo)
-                    .into(roundedImageView);
+            showUserData(user);
         } else {
             Log.e(TAG, " user=null");
         }
@@ -101,17 +101,16 @@ public class UserProfileFragment extends Fragment implements FacebookUserProfile
         return rootView;
     }
 
-    @Override
-    public void onCompleted(User user) {
-        if (user != null) {
-            tvUserName.setText(user.getName());
-            tvUserEmail.setText(user.getEmail());
-            tvUserBirthday.setText(user.getBirthday());
+    private void showUserData(User user) {
+        tvUserName.setText(user.getName());
+        tvUserEmail.setText(user.getEmail());
+        tvUserBirthday.setText(user.getBirthday());
 
-            Picasso.with(getContext())
-                    .load(user.getUserPhotoUri())
-                    .placeholder(R.drawable.user_logo)
-                    .into(roundedImageView);
-        }
+        Picasso.with(getContext())
+                .load(user.getUserPhotoUri())
+                .placeholder(R.drawable.user_logo)
+                .into(roundedImageView);
     }
+
+
 }
