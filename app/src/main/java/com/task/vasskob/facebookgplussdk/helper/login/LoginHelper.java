@@ -6,26 +6,16 @@ import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
 public abstract class LoginHelper {
 
-    /*
-            abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
 
-        GoogleLoginHelper(Context) & FacebookLoginHelper(Context) implement this class
+    final LoginFragment loginFragment;
 
-        LoginPresenter(LoginHelper google, LoginHelper facebook)
+    LoginHelper(LoginFragment loginFragment) {
+        this.loginFragment = loginFragment;
+    }
 
-        set UserProfileFragment with social (Facebook, Google)
+    public abstract void init();
 
-        in UserProfileFragment get user info from selected social use
-        abstract UserProfileHelper with getUser(), logout()
+    public abstract void doLogin();
 
-        GoogleUserProfileHelper & FacebookUserProfileHelper extend UserProfileHelper
-        and go on/
-
-     */
-
-    abstract void init();
-    abstract void doLogin();
-    abstract void onActivityResult(int requestCode, int resultCode, Intent data);
-
-
+    public abstract void onActivityResult(int requestCode, int resultCode, Intent data);
 }

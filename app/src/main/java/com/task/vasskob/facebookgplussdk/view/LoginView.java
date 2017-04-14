@@ -1,9 +1,9 @@
 package com.task.vasskob.facebookgplussdk.view;
 
-import com.task.vasskob.facebookgplussdk.model.User;
+import com.facebook.login.LoginResult;
 
 public interface LoginView {
 
-    void onLoginSuccess(User user);
+    void onLoginSuccess(int loginWithSocial, LoginResult loginResult);
     void showToast(String message);
 }

@@ -33,6 +33,7 @@ public class FBPresenterImpl implements FBSignInPresenter {
     private static final String EMAIL = "email";
     private static final String FIELDS = "fields";
     private static final String FB_LOGIN_CANCELED = "LogIn canceled";
+    private static final int FACEBOOK = 1;
     private String uName;
     private String uPhotoUrl;
     private String uBirthday;
@@ -58,8 +59,7 @@ public class FBPresenterImpl implements FBSignInPresenter {
                                 final Profile profile = Profile.getCurrentProfile();
                                 parseFBResponse(object, profile);
 
-                                User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-                                loginFragment.onLoginSuccess(user);
+                              //  loginFragment.onLoginSuccess(FACEBOOK);
 
                                 Log.d(TAG, "onCompleted:");
                             }

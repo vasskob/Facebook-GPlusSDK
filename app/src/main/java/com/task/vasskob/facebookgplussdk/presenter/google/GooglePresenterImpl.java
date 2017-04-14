@@ -51,7 +51,7 @@ public class GooglePresenterImpl implements GoogleSignInPresenter {
         if (result.isSuccess()) {
             getUserProfileInformation(loginView);
             User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-            loginView.onLoginSuccess(user);
+            //loginView.onLoginSuccess(0,);
         } else {
             Log.d(TAG, " Login result is not success !!! ");
         }

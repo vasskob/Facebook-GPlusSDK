@@ -10,11 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.facebook.login.LoginResult;
 import com.task.vasskob.facebookgplussdk.R;
-import com.task.vasskob.facebookgplussdk.model.User;
-import com.task.vasskob.facebookgplussdk.presenter.facebook.FBPresenterImpl;
-import com.task.vasskob.facebookgplussdk.presenter.google.GooglePresenterImpl;
-import com.task.vasskob.facebookgplussdk.presenter.google.GoogleSignInPresenter;
+import com.task.vasskob.facebookgplussdk.helper.login.FacebookLoginHelper;
+import com.task.vasskob.facebookgplussdk.helper.login.GoogleLoginHelper;
+import com.task.vasskob.facebookgplussdk.helper.login.LoginHelper;
+import com.task.vasskob.facebookgplussdk.presenter.LoginPresenterImpl;
 import com.task.vasskob.facebookgplussdk.view.LoginView;
 
 import butterknife.ButterKnife;
@@ -22,29 +23,26 @@ import butterknife.OnClick;
 
 public class LoginFragment extends Fragment implements LoginView {
 
-    private GoogleSignInPresenter googlePresenter;
-    private FBPresenterImpl facebookPresenter;
+    private LoginHelper googleLoginHelper;
+    private LoginHelper facebookLoginHelper;
+    private LoginPresenterImpl loginPresenter;
 
     @OnClick(R.id.g_plus_sign_in)
     public void onGPlusSignInClick() {
-        googlePresenter.signIn(this);
+        loginPresenter.logIn(googleLoginHelper);
     }
 
     @OnClick(R.id.facebook_sign_in)
     public void onFBookSignInClick() {
-        facebookPresenter.logIn(this);
+        loginPresenter.logIn(facebookLoginHelper);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        googlePresenter = new GooglePresenterImpl();
-        googlePresenter.initGoogleClient(this);
-
-        facebookPresenter = new FBPresenterImpl();
-        facebookPresenter.initSignInFB(this);
-
+        googleLoginHelper = new GoogleLoginHelper(this);
+        facebookLoginHelper = new FacebookLoginHelper(this);
+        loginPresenter = new LoginPresenterImpl();
     }
 
     @Nullable
@@ -55,18 +53,14 @@ public class LoginFragment extends Fragment implements LoginView {
         return rootView;
     }
 
-
     @Override
-    public void onLoginSuccess(User user) {
-
+    public void onLoginSuccess(int loginWithSocial, LoginResult loginResult) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(
-                user.getName(), user.getEmail(), user.getBirthday(), user.getUserPhotoUri());
+        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(loginWithSocial, loginResult);
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.fragment_container, userProfileFragment);
         ft.commit();
     }
-
 
     @Override
     public void showToast(String message) {
@@ -76,25 +70,25 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        googlePresenter.onActivityResult(this, requestCode, resultCode, data);
-        facebookPresenter.onActivityResult(requestCode, resultCode, data);
+        googleLoginHelper.onActivityResult(requestCode, resultCode, data);
+        facebookLoginHelper.onActivityResult(requestCode, resultCode, data);
     }
 
     // TODO: 12/04/17
     /*
         abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
         GoogleLoginHelper(Context) & FacebookLoginHelper(Context) implement this class
+
         LoginPresenter(LoginHelper google, LoginHelper facebook)
 
         set UserProfileFragment with social (Facebook, Google)
+
         in UserProfileFragment get user info from selected social use
         abstract UserProfileHelper with getUser(), logout()
 
         GoogleUserProfileHelper & FacebookUserProfileHelper extend UserProfileHelper
         and go on/
-
      */
-
 }
 
 
