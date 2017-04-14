@@ -1,5 +1,6 @@
 package com.task.vasskob.facebookgplussdk.helper.profile;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -45,5 +46,15 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
                         Log.d(TAG, "signOutGPlus  onResult:" + status);
                     }
                 });
+    }
+
+    @Override
+    public void postMedia(String msg) {
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 }

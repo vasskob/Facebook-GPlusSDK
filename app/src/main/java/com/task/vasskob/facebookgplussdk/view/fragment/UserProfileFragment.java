@@ -1,5 +1,6 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,9 +29,12 @@ public class UserProfileFragment extends Fragment {
     private static final int FACEBOOK = 1;
 
     private static final String TAG = UserProfileFragment.class.getSimpleName();
+    public static final String NEW_PHOTO = "New photo";
+    private static int loginWithSocial;
     private static LoginResult loginResult;
     private FacebookUserProfileHelper facebookUserProfileHelper;
     private GoogleUserProfileHelper googleUserProfileHelper;
+    private User user;
 
     @Bind(R.id.user_logo)
     RoundedImageView roundedImageView;
@@ -43,9 +47,24 @@ public class UserProfileFragment extends Fragment {
 
     @Bind(R.id.user_birthday)
     TextView tvUserBirthday;
-    private User user;
-    private static int loginWithSocial;
 
+    @OnClick(R.id.user_birthday)
+    public void pickMedia(){
+        if (loginWithSocial == GOOGLE) {
+            //googleUserProfileHelper.;
+        } else if (loginWithSocial == FACEBOOK) {
+            facebookUserProfileHelper.onUploadPhoto();
+        }
+    }
+
+    @OnClick(R.id.user_logo)
+    public void postMedia(){
+        if (loginWithSocial == GOOGLE) {
+            googleUserProfileHelper.postMedia(NEW_PHOTO);
+        } else if (loginWithSocial == FACEBOOK) {
+            facebookUserProfileHelper.postMedia(NEW_PHOTO);
+        }
+    }
 
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
@@ -82,7 +101,7 @@ public class UserProfileFragment extends Fragment {
             googleUserProfileHelper = new GoogleUserProfileHelper();
             user = googleUserProfileHelper.getUser();
         } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper = new FacebookUserProfileHelper(loginResult,
+            facebookUserProfileHelper = new FacebookUserProfileHelper(this, loginResult,
                     new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
                 @Override
                 public void onCompleted(User user) {
@@ -112,5 +131,9 @@ public class UserProfileFragment extends Fragment {
                 .into(roundedImageView);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        facebookUserProfileHelper.onActivityResult(requestCode, resultCode, data);
+    }
 
 }

@@ -1,6 +1,12 @@
 package com.task.vasskob.facebookgplussdk.helper.profile;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.facebook.GraphRequest;
@@ -8,13 +14,24 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.share.ShareApi;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.task.vasskob.facebookgplussdk.model.User;
+import com.task.vasskob.facebookgplussdk.view.fragment.UserProfileFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
+import static android.app.Activity.RESULT_OK;
+
 public class FacebookUserProfileHelper extends UserProfileHelper {
 
+    private static final String PUBLISH_ACTIONS = "publish_actions";
+    private static final int PICK_FROM_STORAGE = 20;
+    private final UserProfileFragment fragment;
     private OnFacebookDataLoadListener listener;
     private static final String TAG = FacebookUserProfileHelper.class.getSimpleName();
     private static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
@@ -27,10 +44,12 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
     private String uBirthday;
     private String uPhotoUrl;
     private User user;
+    private Uri mSelectedImage;
 
 
-    public FacebookUserProfileHelper(LoginResult loginResult, OnFacebookDataLoadListener listener) {
+    public FacebookUserProfileHelper(UserProfileFragment fragment, LoginResult loginResult, OnFacebookDataLoadListener listener) {
         this.loginResult = loginResult;
+        this.fragment = fragment;
         this.listener = listener;
     }
 
@@ -79,6 +98,59 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
     public void logout() {
         LoginManager.getInstance().logOut();
     }
+
+    @Override
+    public void postMedia(String message) {
+
+        LoginManager.getInstance().logInWithPublishPermissions(fragment, Arrays.asList(PUBLISH_ACTIONS));
+
+        String path = getURIPath(mSelectedImage);
+
+        Bitmap image = BitmapFactory.decodeFile(path);
+        SharePhoto sharePhoto = new SharePhoto.Builder()
+                .setBitmap(image)
+                .setCaption(message)
+                .build();
+
+        SharePhotoContent content = new SharePhotoContent.Builder()
+                .addPhoto(sharePhoto)
+                .build();
+        ShareApi.share(content, null);
+
+    }
+
+    private String getURIPath(Uri uriValue) {
+        String[] mediaStoreProjection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = fragment.getActivity().getContentResolver().query(uriValue, mediaStoreProjection, null, null, null);
+        if (cursor != null) {
+            int colIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String colIndexString = cursor.getString(colIndex);
+            cursor.close();
+            return colIndexString;
+        }
+        return null;
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case PICK_FROM_STORAGE:
+                if (resultCode == RESULT_OK)
+                    mSelectedImage = data.getData();
+                break;
+            default:
+        }
+    }
+
+
+    public void onUploadPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        fragment.startActivityForResult(intent, PICK_FROM_STORAGE);
+    }
+
 
     public interface OnFacebookDataLoadListener {
         void onCompleted(User user);

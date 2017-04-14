@@ -73,22 +73,6 @@ public class LoginFragment extends Fragment implements LoginView {
         googleLoginHelper.onActivityResult(requestCode, resultCode, data);
         facebookLoginHelper.onActivityResult(requestCode, resultCode, data);
     }
-
-    // TODO: 12/04/17
-    /*
-        abstract LoginHelper with methods init(), doLogin(), onActivityResult(), ...
-        GoogleLoginHelper(Context) & FacebookLoginHelper(Context) implement this class
-
-        LoginPresenter(LoginHelper google, LoginHelper facebook)
-
-        set UserProfileFragment with social (Facebook, Google)
-
-        in UserProfileFragment get user info from selected social use
-        abstract UserProfileHelper with getUser(), logout()
-
-        GoogleUserProfileHelper & FacebookUserProfileHelper extend UserProfileHelper
-        and go on/
-     */
 }
 
 

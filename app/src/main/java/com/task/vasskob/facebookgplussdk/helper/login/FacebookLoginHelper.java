@@ -20,12 +20,9 @@ public class FacebookLoginHelper extends LoginHelper {
     private static final int FACEBOOK = 1;
     private CallbackManager callbackManager;
 
-    private static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
     private static final String PUBLIC_PROFILE = "public_profile";
     private static final String USER_BIRTHDAY = "user_birthday";
-    private static final String BIRTHDAY = "birthday";
     private static final String EMAIL = "email";
-    private static final String FIELDS = "fields";
     private static final String FB_LOGIN_CANCELED = "LogIn canceled";
 
 
@@ -42,7 +39,6 @@ public class FacebookLoginHelper extends LoginHelper {
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "onSuccess:" + loginResult.getAccessToken());
                 loginFragment.onLoginSuccess(FACEBOOK, loginResult);
-
             }
 
             @Override
