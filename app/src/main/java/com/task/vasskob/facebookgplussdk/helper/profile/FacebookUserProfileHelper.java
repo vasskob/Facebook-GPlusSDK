@@ -1,6 +1,5 @@
 package com.task.vasskob.facebookgplussdk.helper.profile;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,26 +24,22 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
-import static android.app.Activity.RESULT_OK;
-
 public class FacebookUserProfileHelper extends UserProfileHelper {
 
-    private static final String PUBLISH_ACTIONS = "publish_actions";
-    private static final int PICK_FROM_STORAGE = 20;
-    private final UserProfileFragment fragment;
-    private OnFacebookDataLoadListener listener;
     private static final String TAG = FacebookUserProfileHelper.class.getSimpleName();
+    private static final String PUBLISH_ACTIONS = "publish_actions";
     private static final String NAME_EMAIL_BIRTHDAY = "name,email,birthday";
     private static final String BIRTHDAY = "birthday";
     private static final String EMAIL = "email";
     private static final String FIELDS = "fields";
-    private final LoginResult loginResult;
     private String uName;
     private String uEmail;
     private String uBirthday;
     private String uPhotoUrl;
     private User user;
-    private Uri mSelectedImage;
+    private final LoginResult loginResult;
+    private final UserProfileFragment fragment;
+    private OnFacebookDataLoadListener listener;
 
 
     public FacebookUserProfileHelper(UserProfileFragment fragment, LoginResult loginResult, OnFacebookDataLoadListener listener) {
@@ -131,26 +126,6 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
         }
         return null;
     }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case PICK_FROM_STORAGE:
-                if (resultCode == RESULT_OK)
-                    mSelectedImage = data.getData();
-                break;
-            default:
-        }
-    }
-
-
-    public void onUploadPhoto() {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        fragment.startActivityForResult(intent, PICK_FROM_STORAGE);
-    }
-
 
     public interface OnFacebookDataLoadListener {
         void onCompleted(User user);

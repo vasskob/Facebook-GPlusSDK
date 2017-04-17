@@ -49,16 +49,16 @@ public class UserProfileFragment extends Fragment {
     TextView tvUserBirthday;
 
     @OnClick(R.id.user_birthday)
-    public void pickMedia(){
+    public void pickMedia() {
         if (loginWithSocial == GOOGLE) {
-            //googleUserProfileHelper.;
+            googleUserProfileHelper.onUploadPhoto(this);
         } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper.onUploadPhoto();
+            facebookUserProfileHelper.onUploadPhoto(this);
         }
     }
 
     @OnClick(R.id.user_logo)
-    public void postMedia(){
+    public void postMedia() {
         if (loginWithSocial == GOOGLE) {
             googleUserProfileHelper.postMedia(NEW_PHOTO);
         } else if (loginWithSocial == FACEBOOK) {
@@ -68,7 +68,6 @@ public class UserProfileFragment extends Fragment {
 
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
-
         if (loginWithSocial == GOOGLE) {
             googleUserProfileHelper.logout();
         } else if (loginWithSocial == FACEBOOK) {
@@ -84,7 +83,7 @@ public class UserProfileFragment extends Fragment {
     public static UserProfileFragment newInstance(int social, LoginResult result) {
         UserProfileFragment f = new UserProfileFragment();
         loginWithSocial = social;
-        loginResult=result;
+        loginResult = result;
         Log.d(TAG, " Logged with 0=google, 1=facebook , = " + social);
         return f;
     }
@@ -96,20 +95,19 @@ public class UserProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.user_profile_layout, container, false);
         ButterKnife.bind(this, rootView);
 
-
         if (loginWithSocial == GOOGLE) {
-            googleUserProfileHelper = new GoogleUserProfileHelper();
+            googleUserProfileHelper = new GoogleUserProfileHelper(this);
             user = googleUserProfileHelper.getUser();
         } else if (loginWithSocial == FACEBOOK) {
             facebookUserProfileHelper = new FacebookUserProfileHelper(this, loginResult,
                     new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
-                @Override
-                public void onCompleted(User user) {
-                showUserData(user);
-                }
-            });
+                        @Override
+                        public void onCompleted(User user) {
+                            showUserData(user);
+                        }
+                    });
 
-             user = facebookUserProfileHelper.getUser();
+            user = facebookUserProfileHelper.getUser();
         }
         if (user != null) {
             showUserData(user);
@@ -133,7 +131,10 @@ public class UserProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        facebookUserProfileHelper.onActivityResult(requestCode, resultCode, data);
+        if (loginWithSocial == GOOGLE) {
+            googleUserProfileHelper.onActivityResult(requestCode, resultCode, data);
+        } else if (loginWithSocial == FACEBOOK) {
+            facebookUserProfileHelper.onActivityResult(requestCode, resultCode, data);
+        }
     }
-
 }
