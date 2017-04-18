@@ -55,6 +55,7 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginSuccess(int loginWithSocial, LoginResult loginResult) {
+        // TODO: 18/04/17 fragment-fragment communication only through activity
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(loginWithSocial, loginResult);
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);

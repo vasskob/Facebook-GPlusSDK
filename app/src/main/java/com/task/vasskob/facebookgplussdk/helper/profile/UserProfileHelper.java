@@ -15,11 +15,14 @@ public abstract class UserProfileHelper {
 
     protected static Uri mSelectedImage;
 
-    abstract User getUser();
+    // TODO: 18/04/17 clear unused methods
+    public abstract User getUser();
 
-    abstract void logout();
+    // TODO: 18/04/17 make async method to load user, use custom interface for this
+//    abstract User getUser(OnUserLoadedListener listener);
+    public abstract void logout();
 
-    abstract void postMedia(String msg);
+    public abstract void postMedia(String msg);
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

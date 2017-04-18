@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 200;
     public LoginFragment loginFragment;
     private Bundle savedState;
+    // TODO: 18/04/17 if GoogleApiClient is global for entire application put it into application class
     public static GoogleApiClient mGoogleApiClient;
     @Bind(R.id.fragment_container)
     FrameLayout frameLayout;

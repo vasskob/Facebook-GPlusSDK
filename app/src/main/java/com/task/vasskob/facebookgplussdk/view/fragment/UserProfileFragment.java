@@ -17,12 +17,14 @@ import com.squareup.picasso.Picasso;
 import com.task.vasskob.facebookgplussdk.R;
 import com.task.vasskob.facebookgplussdk.helper.profile.FacebookUserProfileHelper;
 import com.task.vasskob.facebookgplussdk.helper.profile.GoogleUserProfileHelper;
+import com.task.vasskob.facebookgplussdk.helper.profile.UserProfileHelper;
 import com.task.vasskob.facebookgplussdk.model.User;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+// TODO: 18/04/17 presenter for userProfile logic? 
 public class UserProfileFragment extends Fragment {
 
     private static final int GOOGLE = 0;
@@ -32,8 +34,7 @@ public class UserProfileFragment extends Fragment {
     public static final String NEW_PHOTO = "New photo";
     private static int loginWithSocial;
     private static LoginResult loginResult;
-    private FacebookUserProfileHelper facebookUserProfileHelper;
-    private GoogleUserProfileHelper googleUserProfileHelper;
+    private UserProfileHelper mUserProfileHelper;
     private User user;
 
     @Bind(R.id.user_logo)
@@ -50,30 +51,20 @@ public class UserProfileFragment extends Fragment {
 
     @OnClick(R.id.user_birthday)
     public void pickMedia() {
-        if (loginWithSocial == GOOGLE) {
-            googleUserProfileHelper.onUploadPhoto(this);
-        } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper.onUploadPhoto(this);
-        }
+        mUserProfileHelper.onUploadPhoto(this);
     }
 
     @OnClick(R.id.user_logo)
     public void postMedia() {
-        if (loginWithSocial == GOOGLE) {
-            googleUserProfileHelper.postMedia(NEW_PHOTO);
-        } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper.postMedia(NEW_PHOTO);
-        }
+        mUserProfileHelper.postMedia(NEW_PHOTO);
+
     }
 
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
-        if (loginWithSocial == GOOGLE) {
-            googleUserProfileHelper.logout();
-        } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper.logout();
-        }
+        mUserProfileHelper.logout();
 
+        // TODO: 18/04/17 fragment-fragment communication only through activity
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.fragment_container, new LoginFragment());
@@ -82,6 +73,7 @@ public class UserProfileFragment extends Fragment {
 
     public static UserProfileFragment newInstance(int social, LoginResult result) {
         UserProfileFragment f = new UserProfileFragment();
+        // TODO: 18/04/17 create fragment right way
         loginWithSocial = social;
         loginResult = result;
         Log.d(TAG, " Logged with 0=google, 1=facebook , = " + social);
@@ -94,21 +86,21 @@ public class UserProfileFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.user_profile_layout, container, false);
         ButterKnife.bind(this, rootView);
-
+        // TODO: 18/04/17 if you create common abstraction use it!
         if (loginWithSocial == GOOGLE) {
-            googleUserProfileHelper = new GoogleUserProfileHelper(this);
-            user = googleUserProfileHelper.getUser();
+            mUserProfileHelper = new GoogleUserProfileHelper(UserProfileFragment.this);
+
         } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper = new FacebookUserProfileHelper(this, loginResult,
+            mUserProfileHelper = new FacebookUserProfileHelper(this, loginResult,
                     new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
                         @Override
                         public void onCompleted(User user) {
                             showUserData(user);
                         }
                     });
-
-            user = facebookUserProfileHelper.getUser();
         }
+        user = mUserProfileHelper.getUser();
+
         if (user != null) {
             showUserData(user);
         } else {
@@ -131,10 +123,6 @@ public class UserProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (loginWithSocial == GOOGLE) {
-            googleUserProfileHelper.onActivityResult(requestCode, resultCode, data);
-        } else if (loginWithSocial == FACEBOOK) {
-            facebookUserProfileHelper.onActivityResult(requestCode, resultCode, data);
-        }
+        mUserProfileHelper.onActivityResult(requestCode, resultCode, data);
     }
 }

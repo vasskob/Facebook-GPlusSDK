@@ -6,7 +6,7 @@ import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
 public abstract class LoginHelper {
 
-
+    // TODO: 18/04/17 don't use direct fragment instance, implement own callback
     final LoginFragment loginFragment;
 
     LoginHelper(LoginFragment loginFragment) {
