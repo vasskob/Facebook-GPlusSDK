@@ -12,30 +12,28 @@ import static android.app.Activity.RESULT_OK;
 public abstract class UserProfileHelper {
 
     private static final int PICK_FROM_STORAGE = 4;
+    protected static final String POST_TITLE = "New photo";
 
-    protected static Uri mSelectedImage;
-
-    // TODO: 18/04/17 clear unused methods
     public abstract User getUser();
 
     // TODO: 18/04/17 make async method to load user, use custom interface for this
 //    abstract User getUser(OnUserLoadedListener listener);
     public abstract void logout();
 
-    public abstract void postMedia(String msg);
+    public abstract void postMedia(Uri media);
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICK_FROM_STORAGE:
                 if (resultCode == RESULT_OK)
-                    mSelectedImage = data.getData();
+                    postMedia(data.getData());
                 break;
             default:
-                
+
         }
     }
 
-    public void onUploadPhoto(Fragment fragment) {
+    public void uploadPhoto(Fragment fragment) {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         fragment.startActivityForResult(intent, PICK_FROM_STORAGE);

@@ -1,6 +1,7 @@
 package com.task.vasskob.facebookgplussdk.helper.profile;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -59,11 +60,11 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
     }
 
     @Override
-    public void postMedia(String msg) {
-        if (mSelectedImage != null) {
+    public void postMedia(Uri media) {
+        if (media != null) {
             Intent share = new PlusShare.Builder(mFragment.getActivity())
-                    .setText(msg)
-                    .addStream(mSelectedImage)
+                    .setText(POST_TITLE)
+                    .addStream(media)
                     .setContentDeepLinkId("Hello!") //does not work without this
                     .getIntent();
             mFragment.startActivityForResult(share, SHARE_PHOTO_TO_GOOGLE_PLUS);

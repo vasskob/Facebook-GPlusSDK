@@ -14,10 +14,12 @@ import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.task.vasskob.facebookgplussdk.aplication.Application.FACEBOOK;
+
 public class FacebookLoginHelper extends LoginHelper {
 
     private static final String TAG = FacebookLoginHelper.class.getSimpleName();
-    private static final int FACEBOOK = 1;
+
     private CallbackManager callbackManager;
 
     private static final String PUBLIC_PROFILE = "public_profile";

@@ -5,9 +5,9 @@ import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
+import static com.task.vasskob.facebookgplussdk.aplication.Application.GOOGLE;
 import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
 
 public class GoogleLoginHelper extends LoginHelper {
@@ -36,7 +36,7 @@ public class GoogleLoginHelper extends LoginHelper {
         if (requestCode == RC_SIGN_IN_G) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                loginFragment.onLoginSuccess(0);
+                loginFragment.onLoginSuccess(GOOGLE);
                 Log.d(TAG, "showUserProfileFragment");
             } else {
                 Log.d(TAG, " Login result is not success !!! ");

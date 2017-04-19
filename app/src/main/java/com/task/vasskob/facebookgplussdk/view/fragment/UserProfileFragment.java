@@ -20,20 +20,20 @@ import com.task.vasskob.facebookgplussdk.helper.profile.FacebookUserProfileHelpe
 import com.task.vasskob.facebookgplussdk.helper.profile.GoogleUserProfileHelper;
 import com.task.vasskob.facebookgplussdk.helper.profile.UserProfileHelper;
 import com.task.vasskob.facebookgplussdk.model.User;
+import com.task.vasskob.facebookgplussdk.presenter.UserProfilePresenterImpl;
 import com.task.vasskob.facebookgplussdk.view.UserProfileView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-// TODO: 18/04/17 presenter for userProfile logic? 
+
 public class UserProfileFragment extends Fragment implements UserProfileView {
 
     private static final int GOOGLE = 0;
     private static final int FACEBOOK = 1;
 
     private static final String TAG = UserProfileFragment.class.getSimpleName();
-    public static final String NEW_PHOTO = "New photo";
     public static final String SOCIAL = "social";
     private static int loginWithSocial;
 
@@ -52,20 +52,16 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
 
     @Bind(R.id.user_birthday)
     TextView tvUserBirthday;
+    private UserProfilePresenterImpl mUserProfilePresenter;
 
-    @OnClick(R.id.user_birthday)
-    public void pickMedia() {
-        mUserProfileHelper.onUploadPhoto(this);
-    }
-
-    @OnClick(R.id.user_logo)
+    @OnClick(R.id.post_to_social)
     public void postMedia() {
-        mUserProfileHelper.postMedia(NEW_PHOTO);
+        mUserProfilePresenter.uploadPhoto(this);
     }
 
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
-        mUserProfileHelper.logout();
+        mUserProfilePresenter.logout();
         mCallback.showLoginFragment();
     }
 
@@ -103,17 +99,15 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
                         }
                     });
         }
-        User user = mUserProfileHelper.getUser();
 
-        if (user != null) {
-            showUserData(user);
-        } else {
-            Log.e(TAG, "onCreateView, user == null");
-        }
+        mUserProfilePresenter = new UserProfilePresenterImpl(mUserProfileHelper);
+        mUserProfilePresenter.showUserData(this);
+
         return rootView;
     }
 
-    private void showUserData(User user) {
+    @Override
+    public void showUserData(User user) {
         tvUserName.setText(user.getName());
         tvUserEmail.setText(user.getEmail());
         tvUserBirthday.setText(user.getBirthday());
@@ -161,12 +155,6 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
-    }
-
-
-    @Override
-    public void showUserData() {
-
     }
 
     public interface OnLogoutClickListener {

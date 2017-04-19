@@ -90,16 +90,16 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     }
 
     @Override
-    public void postMedia(String message) {
+    public void postMedia(Uri media) {
 
         LoginManager.getInstance().logInWithPublishPermissions(fragment, Arrays.asList(PUBLISH_ACTIONS));
 
-        String path = getURIPath(mSelectedImage);
+        String path = getURIPath(media);
 
         Bitmap image = BitmapFactory.decodeFile(path);
         SharePhoto sharePhoto = new SharePhoto.Builder()
                 .setBitmap(image)
-                .setCaption(message)
+                .setCaption(POST_TITLE)
                 .build();
 
         SharePhotoContent content = new SharePhotoContent.Builder()
