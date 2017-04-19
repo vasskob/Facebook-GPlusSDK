@@ -1,17 +1,16 @@
 package com.task.vasskob.facebookgplussdk.helper.login;
 
 import android.content.Intent;
-
-import com.task.vasskob.facebookgplussdk.view.LoginView;
+import android.support.v4.app.Fragment;
 
 public abstract class LoginHelper {
 
     // TODO: 18/04/17 don't use direct fragment instance, implement own callback
-    protected LoginView mLoginView;
+    protected Fragment mFragment;
     protected OnLoginListener mListener;
 
-    LoginHelper(LoginView view) {
-        mLoginView = view;
+    LoginHelper(Fragment view) {
+        mFragment = view;
     }
 
     public abstract void init(OnLoginListener listener);

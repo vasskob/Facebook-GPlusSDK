@@ -1,6 +1,7 @@
 package com.task.vasskob.facebookgplussdk.helper.login;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
@@ -16,7 +17,7 @@ public class GoogleLoginHelper extends LoginHelper {
     private static final int RC_SIGN_IN_G = 1;
     private static final String TAG = GoogleLoginHelper.class.getSimpleName();
 
-    public GoogleLoginHelper(LoginView view) {
+    public GoogleLoginHelper(Fragment view) {
         super(view);
     }
 
@@ -30,7 +31,7 @@ public class GoogleLoginHelper extends LoginHelper {
     @Override
     public void doLogin() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        mLoginView.getLoginFragment().startActivityForResult(signInIntent, RC_SIGN_IN_G);
+        mFragment.startActivityForResult(signInIntent, RC_SIGN_IN_G);
     }
 
     @Override

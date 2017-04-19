@@ -1,6 +1,7 @@
 package com.task.vasskob.facebookgplussdk.helper.login;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.facebook.CallbackManager;
@@ -9,7 +10,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.task.vasskob.facebookgplussdk.view.LoginView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +28,7 @@ public class FacebookLoginHelper extends LoginHelper {
     private static final String FB_LOGIN_CANCELED = "LogIn canceled";
 
 
-    public FacebookLoginHelper(LoginView view) {
+    public FacebookLoginHelper(Fragment view) {
         super(view);
     }
 
@@ -60,7 +60,7 @@ public class FacebookLoginHelper extends LoginHelper {
     @Override
     public void doLogin() {
         List<String> permissions = Arrays.asList(PUBLIC_PROFILE, EMAIL, USER_BIRTHDAY);
-        LoginManager.getInstance().logInWithReadPermissions(mLoginView.getLoginFragment(), permissions);
+        LoginManager.getInstance().logInWithReadPermissions(mFragment, permissions);
     }
 
     @Override

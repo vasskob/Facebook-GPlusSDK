@@ -1,9 +1,6 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +12,7 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
+import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.R;
 import com.task.vasskob.facebookgplussdk.helper.profile.FacebookUserProfileHelper;
 import com.task.vasskob.facebookgplussdk.helper.profile.GoogleUserProfileHelper;
@@ -30,16 +28,9 @@ import butterknife.OnClick;
 
 public class UserProfileFragment extends Fragment implements UserProfileView {
 
-    private static final int GOOGLE = 0;
-    private static final int FACEBOOK = 1;
-
     private static final String TAG = UserProfileFragment.class.getSimpleName();
     public static final String SOCIAL = "social";
     private static int loginWithSocial;
-
-    private UserProfileHelper mUserProfileHelper;
-
-    OnLogoutClickListener mCallback;
 
     @Bind(R.id.user_logo)
     RoundedImageView roundedImageView;
@@ -62,7 +53,6 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
         mUserProfilePresenter.logout();
-        mCallback.showLoginFragment();
     }
 
     public static UserProfileFragment newInstance(int social) {
@@ -72,6 +62,12 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
         f.setArguments(args);
         Log.d(TAG, " Logged with 0=google, 1=facebook , = " + social);
         return f;
+    }
+
+    @Override
+    public void onDestroy() {
+        mUserProfilePresenter.onDestroy();
+        super.onDestroy();
     }
 
     @Override
@@ -87,23 +83,15 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
         View rootView = inflater.inflate(R.layout.user_profile_layout, container, false);
         ButterKnife.bind(this, rootView);
 
-        if (loginWithSocial == GOOGLE) {
-            mUserProfileHelper = new GoogleUserProfileHelper(this);
-
-        } else if (loginWithSocial == FACEBOOK) {
-            mUserProfileHelper = new FacebookUserProfileHelper(this,
-                    new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
-                        @Override
-                        public void onCompleted(User user) {
-                            showUserData(user);
-                        }
-                    });
-        }
-
-        mUserProfilePresenter = new UserProfilePresenterImpl(mUserProfileHelper);
-        mUserProfilePresenter.showUserData(this);
+        mUserProfilePresenter = new UserProfilePresenterImpl(loginWithSocial, this);
+        mUserProfilePresenter.showUserData();
 
         return rootView;
+    }
+
+    @Override
+    public void postLogoutScreen() {
+        ((MainActivity)getActivity()).showLoginFragment();
     }
 
     @Override
@@ -119,46 +107,13 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     }
 
     @Override
+    public Fragment getUserProfileFragment() {
+        return this;
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mUserProfileHelper.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            mCallback = (UserProfileFragment.OnLogoutClickListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnLogoutClickListener");
-        }
-
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            try {
-                mCallback = (UserProfileFragment.OnLogoutClickListener) activity;
-            } catch (ClassCastException e) {
-                throw new ClassCastException(activity.toString()
-                        + " must implement OnLogoutClickListener");
-            }
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
-    public interface OnLogoutClickListener {
-        void showLoginFragment();
+        mUserProfilePresenter.onUserProfileResult(requestCode, resultCode, data);
     }
 }
 

@@ -48,7 +48,7 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
     }
 
     @Override
-    public void logout() {
+    public void logout(OnLogoutListener listener) {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -56,6 +56,7 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
                         Log.d(TAG, "signOutGPlus  onResult:" + status);
                     }
                 });
+        listener.onLogoutSuccess();
     }
 
     @Override

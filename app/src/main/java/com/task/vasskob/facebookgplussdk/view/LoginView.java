@@ -10,5 +10,5 @@ public interface LoginView {
 
     void postLoginScreen(int loginType);
 
-    Fragment getLoginFragment();
+    Fragment getFragment();
 }

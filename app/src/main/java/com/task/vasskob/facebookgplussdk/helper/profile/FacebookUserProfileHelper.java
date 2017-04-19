@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -37,11 +38,11 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     private String uBirthday;
     private String uPhotoUrl;
 
-    private final UserProfileFragment fragment;
+    private final Fragment fragment;
     private OnFacebookDataLoadListener listener;
 
 
-    public FacebookUserProfileHelper(UserProfileFragment fragment, OnFacebookDataLoadListener listener) {
+    public FacebookUserProfileHelper(Fragment fragment, OnFacebookDataLoadListener listener) {
         this.fragment = fragment;
         this.listener = listener;
     }
@@ -84,8 +85,9 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     }
 
     @Override
-    public void logout() {
+    public void logout(OnLogoutListener listener) {
         LoginManager.getInstance().logOut();
+        listener.onLogoutSuccess();
     }
 
     @Override

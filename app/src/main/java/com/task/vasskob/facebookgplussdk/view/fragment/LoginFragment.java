@@ -72,7 +72,7 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     @Override
-    public Fragment getLoginFragment() {
+    public Fragment getFragment() {
         return this;
     }
 

@@ -26,21 +26,16 @@ public class LoginPresenterImpl implements LoginPresenter, LoginHelper.OnLoginLi
     public void logIn(int loginType) {
         switch (loginType) {
             case GOOGLE:
-                mLoginHelper = new GoogleLoginHelper(mLoginView);
+                mLoginHelper = new GoogleLoginHelper(mLoginView.getFragment());
                 break;
             case FACEBOOK:
-                mLoginHelper = new FacebookLoginHelper(mLoginView);
+                mLoginHelper = new FacebookLoginHelper(mLoginView.getFragment());
                 break;
             default:
                 throw new RuntimeException("Login Type is not supported" + loginType);
         }
         mLoginHelper.init(this);
         mLoginHelper.doLogin();
-    }
-
-    @Override
-    public void onAttach(LoginView view) {
-        mLoginView = view;
     }
 
     @Override

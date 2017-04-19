@@ -1,5 +1,6 @@
 package com.task.vasskob.facebookgplussdk.presenter.userprofile;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 
 import com.task.vasskob.facebookgplussdk.view.UserProfileView;
@@ -10,5 +11,9 @@ public interface UserProfilePresenter {
 
     void uploadPhoto(Fragment fragment);
 
-    void showUserData(UserProfileView view);
+    void showUserData();
+
+    void onDestroy();
+
+    void onUserProfileResult(int requestCode, int resultCode, Intent data);
 }
