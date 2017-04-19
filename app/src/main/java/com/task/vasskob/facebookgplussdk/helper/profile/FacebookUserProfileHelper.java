@@ -37,7 +37,6 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     private String uEmail;
     private String uBirthday;
     private String uPhotoUrl;
-    private User user;
 
     private final UserProfileFragment fragment;
     private OnFacebookDataLoadListener listener;
@@ -50,9 +49,9 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
 
     @Override
     public User getUser() {
-        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),this);
+        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), this);
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "birthday, email");
+        parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
         request.setParameters(parameters);
         request.executeAsync();
         return new User(uName, uEmail, uBirthday, uPhotoUrl);
@@ -63,8 +62,8 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     public void onCompleted(JSONObject object, GraphResponse response) {
         final Profile profile = Profile.getCurrentProfile();
         parseFBResponse(object, profile);
-        user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-        Log.d(TAG, "user ="+ user.getName() + " email = "+ user.getEmail());
+        User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
+        Log.d(TAG, "user =" + user.getName() + " email = " + user.getEmail());
         listener.onCompleted(user);
     }
 

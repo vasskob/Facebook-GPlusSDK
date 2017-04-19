@@ -37,7 +37,7 @@ public class GoogleLoginHelper extends LoginHelper {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 loginFragment.onLoginSuccess(0);
-                Log.d(TAG, "showUserProfile");
+                Log.d(TAG, "showUserProfileFragment");
             } else {
                 Log.d(TAG, " Login result is not success !!! ");
             }

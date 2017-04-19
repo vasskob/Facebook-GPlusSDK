@@ -6,13 +6,13 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.facebook.login.LoginResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 import com.task.vasskob.facebookgplussdk.view.fragment.UserProfileFragment;
@@ -20,10 +20,10 @@ import com.task.vasskob.facebookgplussdk.view.fragment.UserProfileFragment;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
 import static android.Manifest.permission.GET_ACCOUNTS;
+import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginSuccessListener {
+public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginSuccessListener, UserProfileFragment.OnLogoutClickListener {
 
     private static final String LOGIN_FRAGMENT = "loginFragment";
     private static final int PERMISSION_REQUEST_CODE = 200;
@@ -63,15 +63,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
     }
 
     private void initFragment(Bundle savedInstanceState) {
-        FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
+
         if (savedInstanceState != null) {
             loginFragment = (LoginFragment) getSupportFragmentManager().
                     getFragment(savedInstanceState, LOGIN_FRAGMENT);
         } else {
             loginFragment = new LoginFragment();
         }
-        fm.replace(R.id.fragment_container, loginFragment);
-        fm.commit();
+        replaceFragmentWith(loginFragment);
     }
 
 
@@ -120,11 +119,20 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
 
 
     @Override
-    public void showUserProfile(int loginWithSocial) {
+    public void showUserProfileFragment(int loginWithSocial) {
+        UserProfileFragment upf = UserProfileFragment.newInstance(loginWithSocial);
+        replaceFragmentWith(upf);
+    }
+
+    @Override
+    public void showLoginFragment() {
+        replaceFragmentWith(loginFragment);
+    }
+
+    private void replaceFragmentWith(Fragment fragment) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(loginWithSocial);
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-        ft.replace(R.id.fragment_container, userProfileFragment);
+        ft.replace(R.id.fragment_container, fragment);
         ft.commit();
     }
 }

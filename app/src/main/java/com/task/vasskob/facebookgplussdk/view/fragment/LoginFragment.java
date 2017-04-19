@@ -56,8 +56,7 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginSuccess(int loginWithSocial) {
-        // TODO: 18/04/17 fragment-fragment communication only through activity
-        mCallback.showUserProfile(loginWithSocial);
+        mCallback.showUserProfileFragment(loginWithSocial);
     }
 
     @Override
@@ -103,12 +102,13 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallback=null;
+        mCallback = null;
     }
 
     public interface OnLoginSuccessListener {
-        void showUserProfile(int loginWithSocial);
+        void showUserProfileFragment(int loginWithSocial);
     }
+
 }
 
 
