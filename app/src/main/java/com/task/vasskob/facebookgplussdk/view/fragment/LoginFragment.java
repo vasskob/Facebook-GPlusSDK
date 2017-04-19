@@ -1,9 +1,6 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,38 +9,43 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.R;
-import com.task.vasskob.facebookgplussdk.helper.login.FacebookLoginHelper;
-import com.task.vasskob.facebookgplussdk.helper.login.GoogleLoginHelper;
-import com.task.vasskob.facebookgplussdk.helper.login.LoginHelper;
-import com.task.vasskob.facebookgplussdk.presenter.LoginPresenterImpl;
+import com.task.vasskob.facebookgplussdk.presenter.login.LoginPresenterImpl;
 import com.task.vasskob.facebookgplussdk.view.LoginView;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.task.vasskob.facebookgplussdk.aplication.Application.FACEBOOK;
+import static com.task.vasskob.facebookgplussdk.aplication.Application.GOOGLE;
+
 public class LoginFragment extends Fragment implements LoginView {
-    OnLoginSuccessListener mCallback;
-    private LoginHelper googleLoginHelper;
-    private LoginHelper facebookLoginHelper;
-    private LoginPresenterImpl loginPresenter;
+
+    private static final String FB_LOGIN_CANCELED = "LogIn canceled";
+
+    private LoginPresenterImpl mLoginPresenter;
 
     @OnClick(R.id.g_plus_sign_in)
     public void onGPlusSignInClick() {
-        loginPresenter.logIn(googleLoginHelper);
+        mLoginPresenter.logIn(GOOGLE);
     }
 
     @OnClick(R.id.facebook_sign_in)
     public void onFBookSignInClick() {
-        loginPresenter.logIn(facebookLoginHelper);
+        mLoginPresenter.logIn(FACEBOOK);
+    }
+
+    @Override
+    public void onDestroy() {
+        mLoginPresenter.onDestroy();
+        super.onDestroy();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        googleLoginHelper = new GoogleLoginHelper(this);
-        facebookLoginHelper = new FacebookLoginHelper(this);
-        loginPresenter = new LoginPresenterImpl();
+        mLoginPresenter = new LoginPresenterImpl(this);
     }
 
     @Nullable
@@ -55,60 +57,34 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     @Override
-    public void onLoginSuccess(int loginWithSocial) {
-        mCallback.showUserProfileFragment(loginWithSocial);
+    public void showLoginCancel() {
+        showToast(FB_LOGIN_CANCELED);
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.makeText(getActivity(), message,
-                Toast.LENGTH_SHORT).show();
+    public void showLoginError(RuntimeException error) {
+        showToast(error.getMessage());
+    }
+
+    @Override
+    public void postLoginScreen(int loginType) {
+        ((MainActivity) getActivity()).showUserProfileFragment(loginType);
+    }
+
+    @Override
+    public Fragment getLoginFragment() {
+        return this;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        googleLoginHelper.onActivityResult(requestCode, resultCode, data);
-        facebookLoginHelper.onActivityResult(requestCode, resultCode, data);
+        mLoginPresenter.onLoginResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            mCallback = (OnLoginSuccessListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnHeadlineSelectedListener");
-        }
-
+    private void showToast(String message) {
+        Toast.makeText(getActivity(), message,
+                Toast.LENGTH_SHORT).show();
     }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            try {
-                mCallback = (OnLoginSuccessListener) activity;
-            } catch (ClassCastException e) {
-                throw new ClassCastException(activity.toString()
-                        + " must implement OnHeadlineSelectedListener");
-            }
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
-    public interface OnLoginSuccessListener {
-        void showUserProfileFragment(int loginWithSocial);
-    }
-
 }
 
 

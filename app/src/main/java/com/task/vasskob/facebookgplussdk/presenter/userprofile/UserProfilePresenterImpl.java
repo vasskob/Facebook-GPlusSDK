@@ -1,4 +1,4 @@
-package com.task.vasskob.facebookgplussdk.presenter;
+package com.task.vasskob.facebookgplussdk.presenter.userprofile;
 
 import android.support.v4.app.Fragment;
 import android.util.Log;

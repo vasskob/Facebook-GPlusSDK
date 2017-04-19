@@ -20,7 +20,7 @@ import com.task.vasskob.facebookgplussdk.helper.profile.FacebookUserProfileHelpe
 import com.task.vasskob.facebookgplussdk.helper.profile.GoogleUserProfileHelper;
 import com.task.vasskob.facebookgplussdk.helper.profile.UserProfileHelper;
 import com.task.vasskob.facebookgplussdk.model.User;
-import com.task.vasskob.facebookgplussdk.presenter.UserProfilePresenterImpl;
+import com.task.vasskob.facebookgplussdk.presenter.userprofile.UserProfilePresenterImpl;
 import com.task.vasskob.facebookgplussdk.view.UserProfileView;
 
 import butterknife.Bind;

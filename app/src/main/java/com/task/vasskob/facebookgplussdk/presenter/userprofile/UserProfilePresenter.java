@@ -1,4 +1,4 @@
-package com.task.vasskob.facebookgplussdk.presenter;
+package com.task.vasskob.facebookgplussdk.presenter.userprofile;
 
 import android.support.v4.app.Fragment;
 
@@ -6,11 +6,9 @@ import com.task.vasskob.facebookgplussdk.view.UserProfileView;
 
 public interface UserProfilePresenter {
 
-
     void logout();
 
     void uploadPhoto(Fragment fragment);
 
     void showUserData(UserProfileView view);
-
 }

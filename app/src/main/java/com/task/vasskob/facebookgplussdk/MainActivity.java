@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginSuccessListener, UserProfileFragment.OnLogoutClickListener {
+public class MainActivity extends AppCompatActivity implements UserProfileFragment.OnLogoutClickListener {
 
     private static final String LOGIN_FRAGMENT = "loginFragment";
     private static final int PERMISSION_REQUEST_CODE = 200;
@@ -117,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         finish();
     }
 
-
-    @Override
     public void showUserProfileFragment(int loginWithSocial) {
         UserProfileFragment upf = UserProfileFragment.newInstance(loginWithSocial);
         replaceFragmentWith(upf);

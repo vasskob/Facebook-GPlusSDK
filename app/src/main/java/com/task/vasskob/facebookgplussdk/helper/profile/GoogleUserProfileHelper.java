@@ -12,7 +12,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.PlusShare;
 import com.google.android.gms.plus.model.people.Person;
-import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.model.User;
 
 import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;

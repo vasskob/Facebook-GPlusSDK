@@ -9,7 +9,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
+import com.task.vasskob.facebookgplussdk.view.LoginView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,43 +28,43 @@ public class FacebookLoginHelper extends LoginHelper {
     private static final String FB_LOGIN_CANCELED = "LogIn canceled";
 
 
-    public FacebookLoginHelper(LoginFragment loginFragment) {
-        super(loginFragment);
+    public FacebookLoginHelper(LoginView view) {
+        super(view);
     }
 
-
     @Override
-    public void init() {
+    public void init(OnLoginListener listener) {
         callbackManager = CallbackManager.Factory.create();
+        mListener = listener;
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "onSuccess:" + loginResult.getAccessToken());
-                loginFragment.onLoginSuccess(FACEBOOK);
+                mListener.onLoginSuccess(FACEBOOK);
             }
 
             @Override
             public void onCancel() {
-                loginFragment.showToast(FB_LOGIN_CANCELED);
+                Log.d(TAG, "onCancel:" + FB_LOGIN_CANCELED);
+                mListener.onLoginCancel();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.e(TAG, "Callback onError: " + error);
+                mListener.onLoginError(error);
             }
         });
     }
 
-
     @Override
     public void doLogin() {
         List<String> permissions = Arrays.asList(PUBLIC_PROFILE, EMAIL, USER_BIRTHDAY);
-        LoginManager.getInstance().logInWithReadPermissions(loginFragment,
-                permissions);
+        LoginManager.getInstance().logInWithReadPermissions(mLoginView.getLoginFragment(), permissions);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onLoginResult(int requestCode, int resultCode, Intent data) {
         if (FacebookSdk.isFacebookRequestCode(requestCode)) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
