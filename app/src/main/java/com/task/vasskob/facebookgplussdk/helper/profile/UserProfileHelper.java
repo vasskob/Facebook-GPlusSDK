@@ -31,6 +31,7 @@ public abstract class UserProfileHelper {
                     mSelectedImage = data.getData();
                 break;
             default:
+                
         }
     }
 

@@ -38,7 +38,7 @@ public class FacebookLoginHelper extends LoginHelper {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "onSuccess:" + loginResult.getAccessToken());
-                loginFragment.onLoginSuccess(FACEBOOK, loginResult);
+                loginFragment.onLoginSuccess(FACEBOOK);
             }
 
             @Override

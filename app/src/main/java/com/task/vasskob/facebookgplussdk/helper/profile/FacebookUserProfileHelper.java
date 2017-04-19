@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
@@ -24,7 +25,7 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
-public class FacebookUserProfileHelper extends UserProfileHelper {
+public class FacebookUserProfileHelper extends UserProfileHelper implements GraphRequest.GraphJSONObjectCallback {
 
     private static final String TAG = FacebookUserProfileHelper.class.getSimpleName();
     private static final String PUBLISH_ACTIONS = "publish_actions";
@@ -37,40 +38,35 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
     private String uBirthday;
     private String uPhotoUrl;
     private User user;
-    private final LoginResult loginResult;
+
     private final UserProfileFragment fragment;
     private OnFacebookDataLoadListener listener;
 
 
-    public FacebookUserProfileHelper(UserProfileFragment fragment, LoginResult loginResult, OnFacebookDataLoadListener listener) {
-        this.loginResult = loginResult;
+    public FacebookUserProfileHelper(UserProfileFragment fragment, OnFacebookDataLoadListener listener) {
         this.fragment = fragment;
         this.listener = listener;
     }
 
     @Override
     public User getUser() {
-        GraphRequest request = GraphRequest.newMeRequest(
-                loginResult.getAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject object,
-                            GraphResponse response) {
-                        final Profile profile = Profile.getCurrentProfile();
-                        parseFBResponse(object, profile);
-                        user = new User(uName, uEmail, uBirthday, uPhotoUrl);
-                        listener.onCompleted(user);
-                    }
-                });
-
+        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),this);
         Bundle parameters = new Bundle();
-        parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
+        parameters.putString("fields", "birthday, email");
         request.setParameters(parameters);
         request.executeAsync();
-        return user;
+        return new User(uName, uEmail, uBirthday, uPhotoUrl);
     }
 
+
+    @Override
+    public void onCompleted(JSONObject object, GraphResponse response) {
+        final Profile profile = Profile.getCurrentProfile();
+        parseFBResponse(object, profile);
+        user = new User(uName, uEmail, uBirthday, uPhotoUrl);
+        Log.d(TAG, "user ="+ user.getName() + " email = "+ user.getEmail());
+        listener.onCompleted(user);
+    }
 
     private void parseFBResponse(JSONObject jsonObject, Profile profile) {
 
@@ -126,6 +122,7 @@ public class FacebookUserProfileHelper extends UserProfileHelper {
         }
         return null;
     }
+
 
     public interface OnFacebookDataLoadListener {
         void onCompleted(User user);

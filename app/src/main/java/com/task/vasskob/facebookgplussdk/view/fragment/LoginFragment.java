@@ -1,16 +1,17 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.facebook.login.LoginResult;
 import com.task.vasskob.facebookgplussdk.R;
 import com.task.vasskob.facebookgplussdk.helper.login.FacebookLoginHelper;
 import com.task.vasskob.facebookgplussdk.helper.login.GoogleLoginHelper;
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LoginFragment extends Fragment implements LoginView {
-
+    OnLoginSuccessListener mCallback;
     private LoginHelper googleLoginHelper;
     private LoginHelper facebookLoginHelper;
     private LoginPresenterImpl loginPresenter;
@@ -54,13 +55,9 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     @Override
-    public void onLoginSuccess(int loginWithSocial, LoginResult loginResult) {
+    public void onLoginSuccess(int loginWithSocial) {
         // TODO: 18/04/17 fragment-fragment communication only through activity
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(loginWithSocial, loginResult);
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-        ft.replace(R.id.fragment_container, userProfileFragment);
-        ft.commit();
+        mCallback.showUserProfile(loginWithSocial);
     }
 
     @Override
@@ -73,6 +70,44 @@ public class LoginFragment extends Fragment implements LoginView {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         googleLoginHelper.onActivityResult(requestCode, resultCode, data);
         facebookLoginHelper.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mCallback = (OnLoginSuccessListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            try {
+                mCallback = (OnLoginSuccessListener) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString()
+                        + " must implement OnHeadlineSelectedListener");
+            }
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback=null;
+    }
+
+    public interface OnLoginSuccessListener {
+        void showUserProfile(int loginWithSocial);
     }
 }
 

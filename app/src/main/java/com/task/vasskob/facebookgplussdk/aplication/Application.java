@@ -8,9 +8,12 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
-import static com.task.vasskob.facebookgplussdk.MainActivity.mGoogleApiClient;
+
 
 public class Application extends android.app.Application {
+
+    public static GoogleApiClient mGoogleApiClient;
+
     @Override
     public void onCreate() {
         super.onCreate();

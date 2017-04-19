@@ -12,22 +12,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.facebook.login.LoginResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
+import com.task.vasskob.facebookgplussdk.view.fragment.UserProfileFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
 import static android.Manifest.permission.GET_ACCOUNTS;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginSuccessListener {
 
     private static final String LOGIN_FRAGMENT = "loginFragment";
     private static final int PERMISSION_REQUEST_CODE = 200;
     public LoginFragment loginFragment;
     private Bundle savedState;
-    // TODO: 18/04/17 if GoogleApiClient is global for entire application put it into application class
-    public static GoogleApiClient mGoogleApiClient;
+
+
     @Bind(R.id.fragment_container)
     FrameLayout frameLayout;
 
@@ -116,4 +119,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void showUserProfile(int loginWithSocial) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(loginWithSocial);
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+        ft.replace(R.id.fragment_container, userProfileFragment);
+        ft.commit();
+    }
 }

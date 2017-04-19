@@ -14,6 +14,8 @@ import com.google.android.gms.plus.model.people.Person;
 import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.model.User;
 
+import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
+
 public class GoogleUserProfileHelper extends UserProfileHelper {
 
     private final static String TAG = GoogleUserProfileHelper.class.getSimpleName();
@@ -26,13 +28,13 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
 
     @Override
     public User getUser() {
-        if (Plus.PeopleApi.getCurrentPerson(MainActivity.mGoogleApiClient) != null) {
+        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi
-                    .getCurrentPerson(MainActivity.mGoogleApiClient);
+                    .getCurrentPerson(mGoogleApiClient);
             String uName = currentPerson.getDisplayName();
             String uPhotoUrl = currentPerson.getImage().getUrl();
             String uBirthday = currentPerson.getBirthday();
-            String uEmail = Plus.AccountApi.getAccountName(MainActivity.mGoogleApiClient);
+            String uEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
             Log.d(TAG, "getUserProfileInformation: personN= " + uName + " uEmail=" + uEmail +
                     " uBirthday=" + currentPerson.getBirthday() + " uPhotoUrl =" + uPhotoUrl);
@@ -47,7 +49,7 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
 
     @Override
     public void logout() {
-        Auth.GoogleSignInApi.signOut(MainActivity.mGoogleApiClient).setResultCallback(
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {

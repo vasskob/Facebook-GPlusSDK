@@ -32,6 +32,8 @@ public class UserProfileFragment extends Fragment {
 
     private static final String TAG = UserProfileFragment.class.getSimpleName();
     public static final String NEW_PHOTO = "New photo";
+    public static final String SOCIAL = "social";
+    public static final String LOGIN_RESULT = "loginResult";
     private static int loginWithSocial;
     private static LoginResult loginResult;
     private UserProfileHelper mUserProfileHelper;
@@ -71,13 +73,21 @@ public class UserProfileFragment extends Fragment {
         ft.commit();
     }
 
-    public static UserProfileFragment newInstance(int social, LoginResult result) {
+    public static UserProfileFragment newInstance(int social) {
         UserProfileFragment f = new UserProfileFragment();
-        // TODO: 18/04/17 create fragment right way
-        loginWithSocial = social;
-        loginResult = result;
+
+        Bundle args = new Bundle();
+        args.putInt(SOCIAL, social);
+        f.setArguments(args);
+
         Log.d(TAG, " Logged with 0=google, 1=facebook , = " + social);
         return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loginWithSocial = getArguments().getInt(SOCIAL);
     }
 
     @Nullable
@@ -91,7 +101,7 @@ public class UserProfileFragment extends Fragment {
             mUserProfileHelper = new GoogleUserProfileHelper(UserProfileFragment.this);
 
         } else if (loginWithSocial == FACEBOOK) {
-            mUserProfileHelper = new FacebookUserProfileHelper(this, loginResult,
+            mUserProfileHelper = new FacebookUserProfileHelper(this,
                     new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
                         @Override
                         public void onCompleted(User user) {

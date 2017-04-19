@@ -4,6 +4,6 @@ import com.facebook.login.LoginResult;
 
 public interface LoginView {
 
-    void onLoginSuccess(int loginWithSocial, LoginResult loginResult);
+    void onLoginSuccess(int loginWithSocial);
     void showToast(String message);
 }

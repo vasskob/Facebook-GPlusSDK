@@ -8,6 +8,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
 
+import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
+
 public class GoogleLoginHelper extends LoginHelper {
 
 
@@ -25,7 +27,7 @@ public class GoogleLoginHelper extends LoginHelper {
 
     @Override
     public void doLogin() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(MainActivity.mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         loginFragment.startActivityForResult(signInIntent, RC_SIGN_IN_G);
     }
 
@@ -34,8 +36,8 @@ public class GoogleLoginHelper extends LoginHelper {
         if (requestCode == RC_SIGN_IN_G) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                loginFragment.onLoginSuccess(0, null);
-                Log.d(TAG, "doLogin");
+                loginFragment.onLoginSuccess(0);
+                Log.d(TAG, "showUserProfile");
             } else {
                 Log.d(TAG, " Login result is not success !!! ");
             }
