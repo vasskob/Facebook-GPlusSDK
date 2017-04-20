@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.ResultCallback;
@@ -20,6 +21,7 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
 
     private final static String TAG = GoogleUserProfileHelper.class.getSimpleName();
     private static final int SHARE_PHOTO_TO_GOOGLE_PLUS = 0;
+    private static final String PERSON_WARN = "User can`t be loaded";
     private final Fragment mFragment;
 
     public GoogleUserProfileHelper(Fragment fragment) {
@@ -27,7 +29,7 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
     }
 
     @Override
-    public User getUser() {
+    public void loadUserProfile(OnUserLoadedListener loadedListener) {
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi
                     .getCurrentPerson(mGoogleApiClient);
@@ -36,14 +38,14 @@ public class GoogleUserProfileHelper extends UserProfileHelper {
             String uBirthday = currentPerson.getBirthday();
             String uEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
-            Log.d(TAG, "getUserProfileInformation: personN= " + uName + " uEmail=" + uEmail +
+            Log.d(TAG, "loadUserProfile: userName = " + uName + " uEmail=" + uEmail +
                     " uBirthday=" + currentPerson.getBirthday() + " uPhotoUrl =" + uPhotoUrl);
-            return new User(uName, uEmail, uBirthday, uPhotoUrl);
 
+            User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
+            loadedListener.onLoadSuccess(user);
         } else {
-            //  loginView.showToast(PERSON_INFORMATION_IS_NULL);
             Log.e(TAG, "getUser  user = null");
-            return null;
+            Toast.makeText(mFragment.getActivity(), PERSON_WARN, Toast.LENGTH_LONG).show();
         }
     }
 

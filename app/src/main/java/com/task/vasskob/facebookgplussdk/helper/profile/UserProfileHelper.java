@@ -6,19 +6,16 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
 import com.task.vasskob.facebookgplussdk.model.User;
-import com.task.vasskob.facebookgplussdk.view.fragment.UserProfileFragment;
 
 import static android.app.Activity.RESULT_OK;
 
 public abstract class UserProfileHelper {
 
     private static final int PICK_FROM_STORAGE = 4;
-    protected static final String POST_TITLE = "New photo";
+    static final String POST_TITLE = "New photo";
 
-    public abstract User getUser();
+    public abstract void loadUserProfile(OnUserLoadedListener listener);
 
-    // TODO: 18/04/17 make async method to load user, use custom interface for this
-//    abstract User getUser(OnUserLoadedListener listener);
     public abstract void logout(OnLogoutListener listener);
 
     public abstract void postMedia(Uri media);
@@ -30,7 +27,7 @@ public abstract class UserProfileHelper {
                     postMedia(data.getData());
                 break;
             default:
-
+                break;
         }
     }
 
@@ -42,5 +39,9 @@ public abstract class UserProfileHelper {
 
     public interface OnLogoutListener {
         void onLogoutSuccess();
+    }
+
+    public interface OnUserLoadedListener {
+        void onLoadSuccess(User user);
     }
 }

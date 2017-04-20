@@ -6,7 +6,7 @@ import com.task.vasskob.facebookgplussdk.model.User;
 
 public interface UserProfileView {
 
-    void postLogoutScreen();
+    void onLogoutSuccess();
     void showUserData(User user);
     Fragment getUserProfileFragment();
 }

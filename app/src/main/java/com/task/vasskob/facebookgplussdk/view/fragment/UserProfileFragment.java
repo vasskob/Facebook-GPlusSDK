@@ -1,6 +1,9 @@
 package com.task.vasskob.facebookgplussdk.view.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,11 +15,7 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
-import com.task.vasskob.facebookgplussdk.MainActivity;
 import com.task.vasskob.facebookgplussdk.R;
-import com.task.vasskob.facebookgplussdk.helper.profile.FacebookUserProfileHelper;
-import com.task.vasskob.facebookgplussdk.helper.profile.GoogleUserProfileHelper;
-import com.task.vasskob.facebookgplussdk.helper.profile.UserProfileHelper;
 import com.task.vasskob.facebookgplussdk.model.User;
 import com.task.vasskob.facebookgplussdk.presenter.userprofile.UserProfilePresenterImpl;
 import com.task.vasskob.facebookgplussdk.view.UserProfileView;
@@ -31,6 +30,8 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     private static final String TAG = UserProfileFragment.class.getSimpleName();
     public static final String SOCIAL = "social";
     private static int loginWithSocial;
+
+    OnLogoutClickListener mCallback;
 
     @Bind(R.id.user_logo)
     RoundedImageView roundedImageView;
@@ -90,8 +91,8 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     }
 
     @Override
-    public void postLogoutScreen() {
-        ((MainActivity)getActivity()).showLoginFragment();
+    public void onLogoutSuccess() {
+        mCallback.showLoginFragment();
     }
 
     @Override
@@ -115,5 +116,44 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mUserProfilePresenter.onUserProfileResult(requestCode, resultCode, data);
     }
+
+    public interface OnLogoutClickListener {
+        void showLoginFragment();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mCallback = (UserProfileFragment.OnLogoutClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnLogoutClickListener");
+        }
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            try {
+                mCallback = (UserProfileFragment.OnLogoutClickListener) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString()
+                        + " must implement OnLogoutClickListener");
+            }
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
 }
 

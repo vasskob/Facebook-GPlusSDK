@@ -1,6 +1,8 @@
 package com.task.vasskob.facebookgplussdk.view;
 
-import android.support.v4.app.Fragment;
+import android.content.Intent;
+
+import java.util.List;
 
 public interface LoginView {
 
@@ -8,7 +10,10 @@ public interface LoginView {
 
     void showLoginError(RuntimeException error);
 
-    void postLoginScreen(int loginType);
+    void onLoginSuccess(int loginType);
 
-    Fragment getFragment();
+    void onGoogleLogin(Intent intent);
+
+    void onFacebookLogin(List<String> list);
+
 }

@@ -13,7 +13,7 @@ import com.task.vasskob.facebookgplussdk.view.UserProfileView;
 import static com.task.vasskob.facebookgplussdk.aplication.Application.FACEBOOK;
 import static com.task.vasskob.facebookgplussdk.aplication.Application.GOOGLE;
 
-public class UserProfilePresenterImpl implements UserProfilePresenter, UserProfileHelper.OnLogoutListener {
+public class UserProfilePresenterImpl implements UserProfilePresenter, UserProfileHelper.OnLogoutListener, UserProfileHelper.OnUserLoadedListener {
 
     private static final String TAG = UserProfilePresenterImpl.class.getSimpleName();
 
@@ -27,13 +27,7 @@ public class UserProfilePresenterImpl implements UserProfilePresenter, UserProfi
                 mProfileHelper = new GoogleUserProfileHelper(mProfileView.getUserProfileFragment());
                 break;
             case FACEBOOK:
-                mProfileHelper = new FacebookUserProfileHelper(mProfileView.getUserProfileFragment(),
-                        new FacebookUserProfileHelper.OnFacebookDataLoadListener() {
-                            @Override
-                            public void onCompleted(User user) {
-                                mProfileView.showUserData(user);
-                            }
-                        });
+                mProfileHelper = new FacebookUserProfileHelper(mProfileView.getUserProfileFragment());
                 break;
             default:
                 throw new RuntimeException("Login Type is not supported" + loginType);
@@ -42,7 +36,7 @@ public class UserProfilePresenterImpl implements UserProfilePresenter, UserProfi
 
     @Override
     public void logout() {
-        if (mProfileHelper != null){
+        if (mProfileHelper != null) {
             mProfileHelper.logout(this);
         }
     }
@@ -56,12 +50,7 @@ public class UserProfilePresenterImpl implements UserProfilePresenter, UserProfi
 
     @Override
     public void showUserData() {
-            User user = mProfileHelper.getUser();
-            if (user != null && mProfileView !=null) {
-                mProfileView.showUserData(mProfileHelper.getUser());
-            } else {
-                Log.e(TAG, "onCreateView, user == null");
-            }
+        mProfileHelper.loadUserProfile(this);
     }
 
     @Override
@@ -72,15 +61,24 @@ public class UserProfilePresenterImpl implements UserProfilePresenter, UserProfi
 
     @Override
     public void onUserProfileResult(int requestCode, int resultCode, Intent data) {
-        if(mProfileHelper != null){
+        if (mProfileHelper != null) {
             mProfileHelper.onUserProfileResult(requestCode, resultCode, data);
         }
     }
 
     @Override
     public void onLogoutSuccess() {
-        if (mProfileView != null){
-            mProfileView.postLogoutScreen();
+        if (mProfileView != null) {
+            mProfileView.onLogoutSuccess();
+        }
+    }
+
+    @Override
+    public void onLoadSuccess(User user) {
+        if (user != null && mProfileView != null) {
+            mProfileView.showUserData(user);
+        } else {
+            Log.e(TAG, "showUserData, user == null && view == null");
         }
     }
 }

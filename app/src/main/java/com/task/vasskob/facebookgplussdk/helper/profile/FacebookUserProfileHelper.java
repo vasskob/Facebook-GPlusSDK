@@ -39,22 +39,22 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     private String uPhotoUrl;
 
     private final Fragment fragment;
-    private OnFacebookDataLoadListener listener;
+    private OnUserLoadedListener mListener;
 
 
-    public FacebookUserProfileHelper(Fragment fragment, OnFacebookDataLoadListener listener) {
+    public FacebookUserProfileHelper(Fragment fragment) {
         this.fragment = fragment;
-        this.listener = listener;
     }
 
     @Override
-    public User getUser() {
+    public void loadUserProfile(OnUserLoadedListener loadedListener) {
+
         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), this);
         Bundle parameters = new Bundle();
         parameters.putString(FIELDS, NAME_EMAIL_BIRTHDAY);
         request.setParameters(parameters);
         request.executeAsync();
-        return new User(uName, uEmail, uBirthday, uPhotoUrl);
+        mListener = loadedListener;
     }
 
 
@@ -64,7 +64,7 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
         parseFBResponse(object, profile);
         User user = new User(uName, uEmail, uBirthday, uPhotoUrl);
         Log.d(TAG, "user =" + user.getName() + " email = " + user.getEmail());
-        listener.onCompleted(user);
+        mListener.onLoadSuccess(user);
     }
 
     private void parseFBResponse(JSONObject jsonObject, Profile profile) {
@@ -124,7 +124,4 @@ public class FacebookUserProfileHelper extends UserProfileHelper implements Grap
     }
 
 
-    public interface OnFacebookDataLoadListener {
-        void onCompleted(User user);
-    }
 }

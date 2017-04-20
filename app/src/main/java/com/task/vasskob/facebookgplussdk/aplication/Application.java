@@ -15,6 +15,8 @@ public class Application extends android.app.Application {
     public static GoogleApiClient mGoogleApiClient;
     public static final int GOOGLE = 0;
     public static final int FACEBOOK = 1;
+    public static final int RC_SIGN_IN_G = 2;
+
 
     @Override
     public void onCreate() {
