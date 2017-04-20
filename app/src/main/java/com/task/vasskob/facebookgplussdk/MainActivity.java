@@ -8,13 +8,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener;
+import com.task.vasskob.facebookgplussdk.aplication.Prefs;
 import com.task.vasskob.facebookgplussdk.listener.ErrorListener;
 import com.task.vasskob.facebookgplussdk.listener.MultiplePermissionListener;
 import com.task.vasskob.facebookgplussdk.view.fragment.LoginFragment;
@@ -25,6 +29,8 @@ import butterknife.ButterKnife;
 
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static com.task.vasskob.facebookgplussdk.aplication.Application.FACEBOOK;
+import static com.task.vasskob.facebookgplussdk.aplication.Application.GOOGLE;
 import static com.task.vasskob.facebookgplussdk.aplication.Application.mGoogleApiClient;
 
 public class MainActivity extends AppCompatActivity implements UserProfileFragment.OnLogoutClickListener, LoginFragment.OnLoginSuccessListener {
@@ -43,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements UserProfileFragme
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if (!checkPermission()) {
+        if (!checkAllPermissions()) {
             createPermissionListeners();
         }
         initFragment(savedInstanceState);
@@ -70,14 +76,25 @@ public class MainActivity extends AppCompatActivity implements UserProfileFragme
     }
 
     private void initFragment(Bundle savedInstanceState) {
-        if (checkPermission()) {
+        if (checkAllPermissions()) {
+
             if (savedInstanceState != null) {
                 loginFragment = (LoginFragment) getSupportFragmentManager().
                         getFragment(savedInstanceState, LOGIN_FRAGMENT);
             } else {
                 loginFragment = new LoginFragment();
             }
-            replaceFragmentWith(loginFragment);
+
+
+            if (!Prefs.with(this).getLogged()) {
+                replaceFragmentWith(loginFragment);
+            } else {
+                if (Prefs.with(this).getSocial()) {
+                    showUserProfileFragment(FACEBOOK);
+                } else {
+                   showUserProfileFragment(GOOGLE);
+                }
+            }
         }
     }
 
@@ -110,7 +127,9 @@ public class MainActivity extends AppCompatActivity implements UserProfileFragme
     @Override
     protected void onRestart() {
         super.onRestart();
-        initFragment(savedState);
+        if (!Prefs.with(this).getLogged()) {
+            initFragment(savedState);
+        }
     }
 
     @Override
@@ -135,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements UserProfileFragme
         initFragment(savedState);
     }
 
-    private boolean checkPermission() {
+    private boolean checkAllPermissions() {
         int resultAccount = ContextCompat.checkSelfPermission(getApplicationContext(), GET_ACCOUNTS);
         int resultReadData = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
         return resultAccount == PackageManager.PERMISSION_GRANTED && resultReadData == PackageManager.PERMISSION_GRANTED;

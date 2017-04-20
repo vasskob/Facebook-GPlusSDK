@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.task.vasskob.facebookgplussdk.R;
+import com.task.vasskob.facebookgplussdk.aplication.Prefs;
 import com.task.vasskob.facebookgplussdk.model.User;
 import com.task.vasskob.facebookgplussdk.presenter.userprofile.UserProfilePresenterImpl;
 import com.task.vasskob.facebookgplussdk.view.UserProfileView;
@@ -23,6 +24,9 @@ import com.task.vasskob.facebookgplussdk.view.UserProfileView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.task.vasskob.facebookgplussdk.aplication.Application.FACEBOOK;
+import static com.task.vasskob.facebookgplussdk.aplication.Application.GOOGLE;
 
 
 public class UserProfileFragment extends Fragment implements UserProfileView {
@@ -54,6 +58,7 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     @OnClick(R.id.user_logout)
     public void onLogoutClick() {
         mUserProfilePresenter.logout();
+        Prefs.with(getActivity()).setLogged(false);
     }
 
     public static UserProfileFragment newInstance(int social) {
@@ -75,6 +80,11 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loginWithSocial = getArguments().getInt(SOCIAL);
+        if (loginWithSocial == GOOGLE) {
+            Prefs.with(getActivity()).setSocial(false);
+        } else if (loginWithSocial == FACEBOOK) {
+            Prefs.with(getActivity()).setSocial(true);
+        }
     }
 
     @Nullable
@@ -83,6 +93,7 @@ public class UserProfileFragment extends Fragment implements UserProfileView {
 
         View rootView = inflater.inflate(R.layout.user_profile_layout, container, false);
         ButterKnife.bind(this, rootView);
+        Prefs.with(getActivity()).setLogged(true);
 
         mUserProfilePresenter = new UserProfilePresenterImpl(loginWithSocial, this);
         mUserProfilePresenter.showUserData();
